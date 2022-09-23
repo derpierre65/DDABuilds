@@ -225,7 +225,7 @@ class Build extends AbstractModel implements ILikeableModel
 			});
 	}
 
-	public function generateThumbnail()
+	public function generateThumbnail() : bool
 	{
 		$mapResource = imagecreatefrompng($this->map->getPublicPath());
 		if ( !$mapResource ) {
@@ -291,7 +291,7 @@ class Build extends AbstractModel implements ILikeableModel
 		return Storage::disk('public')->path('thumbnails/'.$this->ID.'.png');
 	}
 
-	public function getNotificationData()
+	public function getNotificationData() : array
 	{
 		return [
 			'ID' => $this->ID,
