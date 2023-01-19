@@ -12,6 +12,7 @@ npm-debug.log
 yarn-error.log
 /public/assets/js/*
 /public/assets/css/*.css
+mix-manifest.json
 
 # ide files
 .idea

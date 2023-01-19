@@ -190,6 +190,7 @@
 		"monk": "Monk",
 		"warden": "Warden",
 		"rogue": "Rogue",
+		"summoner": "Summoner",
 		"hints": "Hints",
 		"seriesEVA": "Series EV-A",
 		"world": "World",
@@ -221,12 +222,17 @@
 		"reflectBeam": "Reflect Beam",
 		"shockBeam": "Shock Beam",
 		"overclockBeam": "Overclock Beam",
-		"crystalCore": "Crystal Core",
 		"rootsOfPurity": "Roots of Purity",
 		"wispDen": "Wisp Den",
 		"beamingBlossom": "Beaming Blossom",
-		"shroomyPit": "Shroomy Pit",
+		"shroomyPit": "Shroomy Geyser",
 		"sludgeLauncher": "Sludge Launcher",
+		"archerMinion": "Archer Minion",
+		"spiderMinion": "Spider Minion",
+		"sirenMinion": "Siren Minion",
+		"mageMinion": "Mage Minion",
+		"ogreMinion": "Ogre Minion",
+		"crystalCore": "Crystal Core",
 		"hint1": "Hint 1",
 		"hint2": "Hint 2",
 		"hint3": "Hint 3",
@@ -264,10 +270,14 @@
 		"theMill": "The Mill",
 		"theOutpost": "The Outpost",
 		"theKeep": "The Keep",
-		"foundriesAndForges": "Foundries and Forges"
+		"foundriesAndForges": "Foundries and Forges",
+		"theBazaar": "The Bazaar",
+		"theLostMetropolis": "The Lost Metropolis",
+		"yuletideVillage": "Yuletide Village"
 	},
 	"mapCategory": {
 		"campaign": "Campaign",
-		"encore": "Encore"
+		"encore": "Encore",
+		"bonus": "Bonus"
 	}
 }

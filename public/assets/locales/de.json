@@ -190,6 +190,7 @@
 		"monk": "Mönch",
 		"warden": "Warden",
 		"rogue": "Rogue",
+		"summoner": "Summoner",
 		"seriesEVA": "Series E-VA",
 		"world": "Welt",
 		"hints": "Hinweise",
@@ -207,9 +208,9 @@
 		"lightningTower": "Lightning Tower",
 		"deadlyStrikerTower": "Deadly Striker Tower",
 		"explosiveTrap": "Explosive Trap",
-		"poisonGasTrap": "Poison Gas Trap",
+		"poisonGasTrap": "Poison Trap",
 		"infernoTrap": "Inferno Trap",
-		"darknessTrap": "Darkness Trap",
+		"darknessTrap": "Poison Dart Tower",
 		"thunderSpikeTrap": "Thunder Spike Trap",
 		"ensnareAura": "Ensnare Aura",
 		"electricAura": "Electric Aura",
@@ -221,12 +222,17 @@
 		"reflectBeam": "Reflect Beam",
 		"shockBeam": "Shock Beam",
 		"overclockBeam": "Overclock Beam",
-		"crystalCore": "Crystal Core",
 		"rootsOfPurity": "Roots of Purity",
 		"wispDen": "Wisp Den",
 		"beamingBlossom": "Beaming Blossom",
-		"shroomyPit": "Shroomy Pit",
+		"shroomyPit": "Shroomy Geyser",
 		"sludgeLauncher": "Sludge Launcher",
+		"archerMinion": "Archer Minion",
+		"spiderMinion": "Spider Minion",
+		"sirenMinion": "Siren Minion",
+		"mageMinion": "Mage Minion",
+		"ogreMinion": "Ogre Minion",
+		"crystalCore": "Crystal Core",
 		"hint1": "Hint 1",
 		"hint2": "Hint 2",
 		"hint3": "Hint 3",
@@ -264,10 +270,14 @@
 		"theMill": "The Mill",
 		"theOutpost": "The Outpost",
 		"theKeep": "The Keep",
-		"foundriesAndForges": "Foundries and Forges"
+		"foundriesAndForges": "Foundries and Forges",
+		"theBazaar": "The Bazaar",
+		"theLostMetropolis": "The Lost Metropolis",
+		"yuletideVillage": "Yuletide Village"
 	},
 	"mapCategory": {
 		"campaign": "Kampagne",
-		"encore": "Encore"
+		"encore": "Encore",
+		"bonus": "Bonus"
 	}
 }

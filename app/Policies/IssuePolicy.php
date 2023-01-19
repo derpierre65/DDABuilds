@@ -13,9 +13,8 @@ class IssuePolicy {
 	 * maintainer list to see all issues and can manage the issues (close)
 	 */
 	public const MAINTAINER = [
-		'76561198004171907', // chakratos
 		'76561198054589426', // derpierre65
-		'76561198051185047', // ice
+		'76561198011599149', // kazeshoni
 	];
 
 	public function isMaintainer(SteamUser $steamUser) {
