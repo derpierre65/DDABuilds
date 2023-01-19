@@ -20,6 +20,7 @@ class FakerProvider extends Base {
 		return $this->generator->randomElement([
 			76561198054589426, // derpierre65
 			76561198080938830, // dragongun100
+			76561198011599149, // kazeshoni
 		]);
 	}
 }
