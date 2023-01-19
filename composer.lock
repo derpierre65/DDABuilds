@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "709e9a6fbac05441ca7bb7fc03b0e25a",
+    "content-hash": "c3ffe2b40d252ebd2bb9f039d6336d27",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -109,36 +109,6 @@
                 }
             ],
             "time": "2021-01-20T22:51:39+00:00"
-        },
-        {
-            "name": "derpierre65/laravel-debug-bar",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/derpierre65/laravel-debug-bar.git",
-                "reference": "9a291a3f1a8e6da51bd7cf95b1da5cebe9b2d3ef"
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/support": "^7.0|^8.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "LaravelDebugBar\\": [
-                        "src",
-                        "resources/js"
-                    ]
-                }
-            },
-            "authors": [
-                {
-                    "name": "derpierre65",
-                    "email": "git@derpierre65.de"
-                }
-            ],
-            "time": "2021-08-02T10:28:49+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -7380,9 +7350,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "derpierre65/laravel-debug-bar": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -7391,5 +7359,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }

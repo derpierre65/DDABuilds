@@ -11,7 +11,6 @@
         "php": "^7.4|^8.0",
         "ext-gd": "*",
         "ext-json": "*",
-        "derpierre65/laravel-debug-bar": "dev-main",
         "doctrine/dbal": "^2.11",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
@@ -27,12 +26,6 @@
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "9.5.2"
     },
-    "repositories": [
-        {
-            "url": "https://github.com/derpierre65/laravel-debug-bar.git",
-            "type": "git"
-        }
-    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
