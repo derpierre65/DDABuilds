@@ -17,6 +17,7 @@ add('writable_dirs', []);
 host('127.0.0.1')
 	->forwardAgent()
 	// ->identityFile('~/.ssh/id_rsa')
+	->set('writable_mode', 'chmod')
 	->set('deploy_path', '/var/www/{{application}}');
 
 task('build', function () {

@@ -12,6 +12,7 @@ use App\Models\Traits\HasSteamUser;
 use App\Models\Traits\TLikeable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property-read int $ID
@@ -260,8 +261,9 @@ class Build extends AbstractModel implements ILikeableModel {
 		);
 	}
 
-	public function getPublicThumbnailPath() {
-		return public_path('assets/images/thumbnail/'.$this->ID.'.png');
+	public function getPublicThumbnailPath() : string
+	{
+		return Storage::disk('public')->path('thumbnails/'.$this->ID.'.png');
 	}
 
 	public function getNotificationData() {

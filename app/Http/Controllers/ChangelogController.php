@@ -24,7 +24,7 @@ class ChangelogController extends AbstractController {
 		}
 
 		return Cache::remember('github-changelog', now()->addHour(), function () use ($changelogParser) {
-			return $this->filterChangelogs($changelogParser->parse(file_get_contents('https://raw.githubusercontent.com/RefreshingWater/DDABuilds/master/CHANGELOG.md')));
+			return $this->filterChangelogs($changelogParser->parse(file_get_contents('https://raw.githubusercontent.com/derpierre65/DDABuilds/master/CHANGELOG.md')));
 		});
 	}
 }

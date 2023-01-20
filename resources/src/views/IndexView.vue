@@ -51,7 +51,7 @@ export default {
 		},
 	},
 	created() {
-		// axios.get('https://api.github.com/repos/RefreshingWater/DDABuilds/contributors').then(({ data }) => {
+		// axios.get('https://api.github.com/repos/derpierre65/DDABuilds/contributors').then(({ data }) => {
 		// 	this.contributors = data;
 		// });
 	},

@@ -71,7 +71,7 @@
 				<ul class="nav navbar-nav">
 					<router-link :to="{name: 'changelog'}" class="nav-item" tag="li"><a class="nav-link">Changelog</a></router-link>
 					<li class="nav-item">
-						<a class="nav-link" href="https://github.com/RefreshingWater/DDABuilds" target="_blank">GitHub <i class="fa fa-external-link" /></a>
+						<a class="nav-link" href="https://github.com/derpierre65/DDABuilds" target="_blank">GitHub <i class="fa fa-external-link" /></a>
 					</li>
 				</ul>
 			</div>
