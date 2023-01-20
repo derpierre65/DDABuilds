@@ -62,8 +62,8 @@ i18next.init({
 	returnObjects: true,
 	lng: getBrowserLanguage(),
 	backend: {
-		loadPath: '/assets/locales/{{lng}}.json',
-		addPath: '/assets/locales/{{lng}}.json',
+		loadPath: '/assets/locales/{{lng}}.json?t=' + process.env.BUILD_TIME,
+		addPath: '/assets/locales/{{lng}}.json?t=' + process.env.BUILD_TIME,
 	},
 	interpolation: {
 		format(value, format) {

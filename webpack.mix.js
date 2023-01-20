@@ -1,5 +1,7 @@
 const mix = require('laravel-mix');
 
+process.env.BUILD_TIME = Math.floor(Date.now() / 1000).toString();
+
 mix.disableNotifications();
 
 if (mix.inProduction()) {
