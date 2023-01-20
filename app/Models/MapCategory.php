@@ -7,6 +7,10 @@ class MapCategory extends AbstractModel {
 
 	protected $primaryKey = 'ID';
 
+	protected $guarded = [];
+
+	public $timestamps = false;
+
 	public function maps() {
 		return $this->hasMany(Map::class, 'mapCategoryID', 'ID');
 	}
