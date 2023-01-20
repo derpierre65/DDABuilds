@@ -18,6 +18,8 @@ class Map extends AbstractModel
 
 	public $timestamps = false;
 
+	protected $guarded = [];
+
 	public function difficultyUnits(): HasMany
 	{
 		return $this->hasMany(MapAvailableUnit::class, 'mapID', 'ID');

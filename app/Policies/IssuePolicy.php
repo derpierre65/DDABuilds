@@ -14,7 +14,6 @@ class IssuePolicy {
 	 */
 	public const MAINTAINER = [
 		'76561198054589426', // derpierre65
-		'76561198011599149', // kazeshoni
 	];
 
 	public function isMaintainer(SteamUser $steamUser) {
