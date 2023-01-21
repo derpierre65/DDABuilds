@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\HasSteamUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $commentID
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read string  $steamID
  * @property-read string  $description
  */
-class IssueComment extends AbstractModel {
+class IssueComment extends Model {
 	use HasSteamUser, HasFactory;
 
 	public const WAIT_TIME = 60;

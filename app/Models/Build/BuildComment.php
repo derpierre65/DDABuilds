@@ -2,11 +2,11 @@
 
 namespace App\Models\Build;
 
-use App\Models\AbstractModel;
 use App\Models\Build;
 use App\Models\Like\ILikeableModel;
 use App\Models\Traits\HasSteamUser;
 use App\Models\Traits\TLikeable;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $ID
@@ -18,7 +18,7 @@ use App\Models\Traits\TLikeable;
  * @property-read int $date
  * @property-read Build $build
  */
-class BuildComment extends AbstractModel implements ILikeableModel {
+class BuildComment extends Model implements ILikeableModel {
 	use HasSteamUser;
 	use TLikeable;
 

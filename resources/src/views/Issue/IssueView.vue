@@ -145,10 +145,10 @@ export default {
 			this.page = this.$route.params.page || 0;
 			this.pages = 0;
 
-			return axios.get(this.baseUrl + '/comments?page=' + this.page).then(({ data: { data: comments, currentPage, lastPage } }) => {
+			return axios.get(this.baseUrl + '/comments?page=' + this.page).then(({ data: { data: comments, pagination} }) => {
 				this.comments = comments;
-				this.page = currentPage;
-				this.pages = lastPage;
+				this.page = pagination.current_page;
+				this.pages = pagination.last_page;
 			});
 		},
 		fetch() {

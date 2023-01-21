@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasSteamUser;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read string $objectType
@@ -12,7 +13,7 @@ use App\Models\Traits\HasSteamUser;
  * @property-read string $date
  * @property-read string $notificationID
  */
-class Like extends AbstractModel {
+class Like extends Model {
 	use HasSteamUser;
 
 	protected $table = 'like';

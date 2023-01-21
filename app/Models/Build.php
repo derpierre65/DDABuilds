@@ -12,6 +12,7 @@ use App\Models\Traits\HasSteamUser;
 use App\Models\Traits\TLikeable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -40,7 +41,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read Map $map
  * @property-read BuildWatch $watchStatus
  */
-class Build extends AbstractModel implements ILikeableModel
+class Build extends Model implements ILikeableModel
 {
 	use HasFactory;
 	use HasSteamUser;

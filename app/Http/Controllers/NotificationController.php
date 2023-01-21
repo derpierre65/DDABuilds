@@ -8,7 +8,7 @@ use App\Models\DatabaseNotification;
 use App\Models\SteamUser;
 use App\Notifications\BuildCommentNotification;
 
-class NotificationController extends AbstractController {
+class NotificationController extends Controller {
 	public function debug() {
 		/** @var BuildComment $buildComment */
 		$buildComment = BuildComment::query()->first();
@@ -21,7 +21,7 @@ class NotificationController extends AbstractController {
 
 	public function index() {
 		return NotificationResource::collection(
-			request()->user()->notifications()->simplePaginate()
+			request()->user()->notifications()->paginate()
 		);
 	}
 

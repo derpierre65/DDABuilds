@@ -401,10 +401,10 @@ export default {
 				.get('/builds/', {
 					params: Object.assign({}, filters, this.fetchParams, {page}),
 				})
-				.then(({ data: { data, currentPage, lastPage } }) => {
+				.then(({ data: { data, pagination } }) => {
 					this.builds = data;
-					this.page = currentPage;
-					this.pages = lastPage;
+					this.page = pagination.current_page;
+					this.pages = pagination.last_page;
 				})
 				.finally(hidePageLoader);
 		},

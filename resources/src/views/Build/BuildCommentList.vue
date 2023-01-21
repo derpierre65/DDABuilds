@@ -73,9 +73,9 @@ export default {
 
 			axios
 				.get('/builds/' + this.buildId + '/comments?page=' + this.page)
-				.then(({ data: { data, currentPage, lastPage } }) => {
-					this.page = currentPage + 1;
-					this.lastPage = lastPage;
+				.then(({ data: { data, pagination } }) => {
+					this.page = pagination.current_page + 1;
+					this.lastPage = pagination.last_page;
 					this.comments.push(...data);
 					this.$emit('comments', { comments: data, currentPage: this.page });
 					state.loaded();

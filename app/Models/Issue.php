@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\HasSteamUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int   $reportID
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read int   $status
  * @property-read SteamUser $user
  */
-class Issue extends AbstractModel {
+class Issue extends Model {
 	use HasSteamUser, HasFactory;
 
 	public const STATUS_OPEN = 1;

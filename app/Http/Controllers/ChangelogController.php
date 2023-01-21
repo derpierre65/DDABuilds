@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ChangelogParser;
 use Illuminate\Support\Facades\Cache;
 
-class ChangelogController extends AbstractController {
+class ChangelogController extends Controller {
 	protected function filterChangelogs(array $changelogs) : array {
 		$filtered = [];
 		foreach ( $changelogs as $changelog ) {

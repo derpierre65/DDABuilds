@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class IssueController extends AbstractController {
+class IssueController extends Controller {
 	public function __construct() {
 		$this->authorizeResource(Issue::class);
 	}
@@ -24,7 +24,7 @@ class IssueController extends AbstractController {
 			$issues->where('steamID', auth()->id());
 		}
 
-		return IssueResource::collection($issues->simplePaginate());
+		return IssueResource::collection($issues->paginate());
 	}
 
 	public function store(Request $request) {

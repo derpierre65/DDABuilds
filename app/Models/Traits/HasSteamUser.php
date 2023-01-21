@@ -2,11 +2,11 @@
 
 namespace App\Models\Traits;
 
-use App\Models\AbstractModel;
 use App\Models\SteamUser;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin AbstractModel
+ * @mixin Model
  *
  * @property-read SteamUser $user
  */

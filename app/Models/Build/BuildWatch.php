@@ -2,9 +2,9 @@
 
 namespace App\Models\Build;
 
-use App\Models\AbstractModel;
+use Illuminate\Database\Eloquent\Model;
 
-class BuildWatch extends AbstractModel {
+class BuildWatch extends Model {
 	protected $table = 'build_watch';
 
 	public $incrementing = false;

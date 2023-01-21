@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class IndexController extends AbstractController {
+class IndexController extends Controller {
 	public function index() {
 		// TODO remove after url changed in game
 		if ( !isset($_SERVER['QUERY_STRING']) ) {

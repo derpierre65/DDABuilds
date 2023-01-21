@@ -7,7 +7,7 @@ use App\Models\Build;
 use App\Models\Build\BuildComment;
 use Illuminate\Http\Request;
 
-class BuildCommentController extends AbstractController {
+class BuildCommentController extends Controller {
 	public function __construct() {
 		$this->middleware('can:view,build');
 		$this->authorizeResource(BuildComment::class);
@@ -15,7 +15,7 @@ class BuildCommentController extends AbstractController {
 
 	public function index(Build $build) {
 		return BuildCommentResource::collection(
-			$build->commentList()->with(['user', 'likeValue'])->simplePaginate()
+			$build->commentList()->with(['user', 'likeValue'])->paginate()
 		);
 	}
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
  * @property-read string $languageCode
  * @property-read string $name
  */
-class Locale extends AbstractModel {
+class Locale extends Model {
 	protected $table = 'locale';
 
 	protected $primaryKey = 'ID';

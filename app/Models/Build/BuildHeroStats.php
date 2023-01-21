@@ -2,9 +2,9 @@
 
 namespace App\Models\Build;
 
-use App\Models\AbstractModel;
+use Illuminate\Database\Eloquent\Model;
 
-class BuildHeroStats extends AbstractModel {
+class BuildHeroStats extends Model {
 	protected $table = 'build_stats';
 
 	protected $primaryKey = null;

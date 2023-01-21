@@ -82,7 +82,7 @@ export default {
 
 			axios
 				.get('/issues/?page=' + page + (mineList ? '&mine=1' : ''))
-				.then(({ data: { data, lastPage, currentPage } }) => {
+				.then(({ data: { data, pagination } }) => {
 					for (let issue of data) {
 						issue.link = {
 							name: 'issue',
@@ -94,8 +94,8 @@ export default {
 					}
 
 					this.issues = data;
-					this.pages = lastPage;
-					this.page = currentPage;
+					this.pages = pagination.last_page;
+					this.page = pagination.current_page;
 				})
 				.catch(() => {
 					this.$notify({

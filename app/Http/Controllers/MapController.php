@@ -11,7 +11,7 @@ use App\Models\Map;
 use App\Models\MapCategory;
 use App\Models\Tower;
 
-class MapController extends AbstractController {
+class MapController extends Controller {
 	public function index() {
 		return MapCategory::with('maps')->get();
 	}

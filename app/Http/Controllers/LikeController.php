@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class LikeController extends AbstractController {
+class LikeController extends Controller {
 	public function like(Request $request) : array {
 		$objectID = $request->get('objectID');
 		$objectType = $request->get('objectType');

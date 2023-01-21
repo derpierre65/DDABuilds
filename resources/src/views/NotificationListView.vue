@@ -99,10 +99,10 @@ export default {
 
 			axios
 				.get('/notifications/?page=' + page)
-				.then(({ data: { data, lastPage, currentPage } }) => {
+				.then(({ data: { data, pagination } }) => {
 					this.notifications = data;
-					this.page = currentPage;
-					this.pages = lastPage;
+					this.page = pagination.current_page;
+					this.pages = pagination.last_page;
 				})
 				.catch(() => {
 					this.$notify({

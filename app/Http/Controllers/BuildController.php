@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class BuildController extends AbstractController
+class BuildController extends Controller
 {
 	use AuthorizesRequests;
 
@@ -57,7 +57,7 @@ class BuildController extends AbstractController
 			'hardcore' => $request->query('hardcore'),
 			'rifted' => $request->query('rifted'),
 			'afkAble' => $request->query('afkAble'),
-		])->simplePaginate());
+		])->paginate());
 	}
 
 	public function show(Request $request, Build $build)

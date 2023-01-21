@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Laravel\JsonResource;
 use App\Models\Issue;
 use Illuminate\Http\Resources\MissingValue;
 

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @property-read int    $ID
  * @property-read string $name
  */
-class GameMode extends AbstractModel {
+class GameMode extends Model {
 	/** @inheritdoc */
 	protected $table = 'game_mode';
 

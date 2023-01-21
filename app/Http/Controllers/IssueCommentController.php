@@ -9,13 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class IssueCommentController extends AbstractController {
+class IssueCommentController extends Controller {
 	public function __construct() {
 		$this->middleware('can:view,issue');
 	}
 
 	public function index(Issue $issue) {
-		return IssueCommentResource::collection($issue->getComments()->orderBy('time', 'DESC')->with('user')->simplePaginate());
+		return IssueCommentResource::collection($issue->getComments()->orderBy('time', 'DESC')->with('user')->paginate());
 	}
 
 	public function store(Request $request, Issue $issue) {

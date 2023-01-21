@@ -8,6 +8,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 
 /**
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
  * @property-read string name
  * @property-read string avatarHash
  */
-class SteamUser extends AbstractModel implements AuthenticatableContract, AuthorizableContract {
+class SteamUser extends Model implements AuthenticatableContract, AuthorizableContract {
 	use Authenticatable, Authorizable, HasFactory, Notifiable;
 
 	public const AVATAR_SMALL = 1;
