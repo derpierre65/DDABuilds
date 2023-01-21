@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2023-01-21
+### Added
+- Map will scroll with the page for a better tower placement.
+
+### Fixed
+- Translation keys for new towers fixed.
+- Fixed tower size for specific towers.
+- The image for placing new Series-EVA Towers have now the correct image and will not be replaced after start dragging.
+
+## [2.0.5] - 2023-01-20
+### Added
+- Added new Maps The Bazaar, The Lost Metropolis and Yuletide Village.
+- Added new hero Summoner.
+- Added new Huntress, Squire and Series-EVA Towers.
+
+### Removed
+- Removed old Huntress, Squire and Series-EVA Towers (automatically removed in old builds).
+
 ## [2.0.4] - 2023-01-19
 ### Added
 - Tooltip for Towers.

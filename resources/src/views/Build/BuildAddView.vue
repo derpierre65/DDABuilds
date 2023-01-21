@@ -33,7 +33,7 @@
 					<div class="col-lg-9">
 						<!-- map container -->
 						<div id="mapContainer" ref="mapContainer">
-							<img :src="'/assets/images/map/' + map.name + '.png'" alt="map image" class="buildMap">
+							<img :src="`/assets/images/map/${map.name}.png`" alt="map image" class="buildMap">
 
 							<div v-for="(entry, key) of waveTowersFiltered"
 								:key="key"
@@ -45,11 +45,11 @@
 								@mouseout="towerMouseOut(entry.placed, key)"
 								@mouseover.stop="towerMouseOver(entry.placed, key)"
 								@contextmenu.prevent="towerDelete(entry.placed)">
-								<img :alt="entry.tower.name" :src="'/assets/images/tower/' + entry.tower.name + (entry.placed.size || '') + '.png'" class="tower">
+								<img :alt="entry.tower.name" :src="`/assets/images/tower/${entry.tower.name}${entry.placed.size ? '_'+(entry.placed.size - entry.tower.unitCost) : ''}.png`" class="tower" :style="getTowerStyle(entry)">
 								<div v-if="isEditMode && entry.placed.mouseOver && (entry.tower.isResizable || entry.tower.isRotatable)" class="menu">
-									<i v-if="entry.placed.size > entry.tower.unitCost" class="fa fa-minus du-decrease" @click="towerUpdateSize(entry.placed, -1)" />
+									<i v-if="entry.tower.isResizable" class="fa fa-minus du-decrease" :style="entry.placed.size > entry.tower.unitCost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, -1)" />
 									<i v-if="entry.tower.isRotatable" class="fa fa-repeat" @mousedown="towerMouseDown(entry.placed, key)" />
-									<i v-if="entry.placed.size < entry.tower.maxUnitCost" class="fa fa-plus du-increase" @click="towerUpdateSize(entry.placed, 1)" />
+									<i v-if="entry.tower.isResizable" class="fa fa-plus du-increase" :style="entry.placed.size < entry.tower.maxUnitCost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, 1)" />
 								</div>
 							</div>
 						</div>
@@ -674,6 +674,16 @@ export default {
 			$(this.$refs.placedTower[this.rotateTower - 1]).draggable('enable');
 			this.rotateTower = 0;
 		},
+		getTowerStyle(entry) {
+			const style = {};
+			if ( typeof entry.tower.image_size === 'string' && entry.tower.image_size.length ) {
+				const split = entry.tower.image_size.split('x');
+				style.width = split[0] + 'px';
+				style.height = split[1] + 'px';
+			}
+
+			return style;
+		},
 		towerMouseDown(tower, key) {
 			this.rotateTower = key + 1;
 
@@ -713,8 +723,8 @@ export default {
 			}, 50);
 		},
 		towerUpdateSize(tower, update) {
-			let newTowerSize = tower.size + update;
-			let towerInfo = this.towers[tower.ID];
+			const newTowerSize = tower.size + update;
+			const towerInfo = this.towers[tower.ID];
 			if (newTowerSize < towerInfo.unitCost || newTowerSize > towerInfo.maxUnitCost) {
 				return;
 			}
@@ -736,31 +746,40 @@ export default {
 		},
 		startDraggable() {
 			$('#towerControlPanel .tower-container').draggable({
-				helper: 'clone',
+				helper: (event) => {
+					const target = event.currentTarget;
+					const towerId = target.getAttribute('data-tower');
+					const tower = this.towers[towerId];
+					const towerStyle = this.getTowerStyle({ tower });
+					let towerImage = `/assets/images/tower/${tower.name}.png`;
+
+					if (tower.isResizable) {
+						towerImage = towerImage.replace('.png', '_0.png');
+					}
+
+					let style = '';
+					for ( const key of Object.keys(towerStyle) ) {
+						style += `${key}:${towerStyle[key]};`;
+					}
+
+					return $(`<div data-class="${target.getAttribute('data-class')}" data-tower="${towerId}" class="tower-container pointer dummy ui-draggable-dragging"><img src="${towerImage}" class="tower" style="${style}"></div>`);
+				},
 				start: (event, ui) => {
 					let instance = $(event.target).draggable('instance');
 					let element = instance.element;
-					let tower = this.towers[element.data('tower')];
 					if (element.hasClass('disabled')) {
 						return false;
 					}
 
+					// center icon to the cursor
 					function updatePosition() {
-						// center the icon on
 						instance.offset.click = {
 							left: Math.floor(ui.helper.width() * 0.5),
 							top: Math.floor(ui.helper.height() * 0.5),
 						};
 					}
 
-					if (tower.unitCost < tower.maxUnitCost) {
-						let towerImage = ui.helper.find('.tower');
-						towerImage.attr('title', towerImage.attr('title') + ' (' + tower.unitCost + ')');
-						towerImage = towerImage[0];
-						towerImage.src = towerImage.src.replace('.png', tower.unitCost + '.png');
-						towerImage.onload = updatePosition;
-					}
-
+					ui.helper.find('.tower')[0].onload = updatePosition;
 					updatePosition();
 				},
 			});
@@ -925,7 +944,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 .tower-container {
 	position: relative;
 	display: inline-block;
@@ -990,7 +1008,8 @@ export default {
 }
 
 #mapContainer {
-	position: relative;
+	top: 30px;
+	position: sticky;
 	width: 1024px;
 	height: 1024px;
 
