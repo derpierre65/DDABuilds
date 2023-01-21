@@ -7,7 +7,6 @@ use App\Http\Requests\BuildRequest;
 use App\Http\Resources\BuildResource;
 use App\Models\Build;
 use App\Models\Build\BuildWave;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +14,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BuildController extends Controller
 {
-	use AuthorizesRequests;
-
 	public function __construct()
 	{
 		$this->authorizeResource(Build::class);

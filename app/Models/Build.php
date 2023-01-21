@@ -164,7 +164,7 @@ class Build extends Model implements ILikeableModel
 		}
 	}
 
-	public function scopeSearch(Builder $query, array $searchParameters)
+	public function scopeSearch(Builder $query, array $searchParameters) : Builder
 	{
 		$searchParameters = array_merge([
 			'isDeleted' => 0,
@@ -213,7 +213,7 @@ class Build extends Model implements ILikeableModel
 			}
 		}
 
-		$query
+		return $query
 			->where($where)
 			->where(function ($query) {
 				$query->where('buildStatus', '=', self::STATUS_PUBLIC);
