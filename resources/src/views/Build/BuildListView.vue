@@ -394,20 +394,13 @@ export default {
 			showPageLoader();
 			this.updateFilter();
 
-			const defaults = this.getDefaultFilter();
-			const filters = JSON.parse(JSON.stringify(this.filter));
-			for (const key of Object.keys(defaults)) {
-				if (defaults[key] === filters[key] || Array.isArray(defaults[key]) && !filters[key].length) {
-					console.log(key, filters[key]);
-					delete filters[key];
-				}
-			}
-
-			let queryParams = (new URLSearchParams(Object.assign({}, filters, this.fetchParams))).toString();
-			let page = this.$route.params.page || 0;
+			const filters = this.buildListSearch(JSON.parse(JSON.stringify(this.filter)));
+			const page = this.$route.params.page || 0;
 
 			axios
-				.get('/builds/?page=' + page + (queryParams ? '&' + queryParams : ''))
+				.get('/builds/', {
+					params: Object.assign({}, filters, this.fetchParams, {page}),
+				})
 				.then(({ data: { data, currentPage, lastPage } }) => {
 					this.builds = data;
 					this.page = currentPage;
