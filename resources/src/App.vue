@@ -11,11 +11,11 @@
 							<router-link :to="{name: 'buildAddSelect'}" class="nav-item" tag="li">
 								<a class="nav-link">{{$t('menu.buildAddSelect')}}</a>
 							</router-link>
-							<router-link :to="{name: 'issueAdd'}" class="nav-item" tag="li">
+							<router-link :to="{name: 'bug-report-add'}" class="nav-item" tag="li">
 								<a class="nav-link">{{$t('menu.bugReportAdd')}}</a>
 							</router-link>
-							<router-link v-if="$store.state.authentication.user.isMaintainer" :to="{name: 'issueList'}" class="nav-item" tag="li">
-								<a class="nav-link">{{$t('menu.issueList')}}</a>
+							<router-link v-if="$store.state.authentication.user.isMaintainer" :to="{name: 'bug-reports'}" class="nav-item" tag="li">
+								<a class="nav-link">{{$t('menu.bug_reports')}}</a>
 							</router-link>
 						</template>
 					</ul>
@@ -45,7 +45,7 @@
 								{{$store.state.authentication.user.name}}
 							</template>
 							<router-link :to="{name: 'myBuildList'}" class="dropdown-item" tag="li"><a>{{$t('menu.myBuilds')}}</a></router-link>
-							<router-link :to="{name: 'myIssueList'}" class="dropdown-item" tag="li"><a>{{$t('menu.myIssues')}}</a></router-link>
+							<router-link :to="{name: 'my-bug-reports'}" class="dropdown-item" tag="li"><a>{{$t('menu.my_bug_reports')}}</a></router-link>
 							<router-link :to="{name: 'likedBuildList'}" class="dropdown-item" tag="li"><a>{{$t('menu.likedBuilds')}}</a></router-link>
 							<router-link :to="{name: 'favoriteBuildList'}" class="dropdown-item" tag="li"><a>{{$t('menu.favoriteBuilds')}}</a></router-link>
 							<router-link :to="{name: 'logout'}" class="dropdown-item" tag="li"><a>{{$t('menu.logout')}}</a></router-link>

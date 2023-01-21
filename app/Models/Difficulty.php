@@ -13,9 +13,6 @@ class Difficulty extends Model {
 	use HasFactory;
 
 	/** @inheritdoc */
-	protected $table = 'difficulty';
-
-	/** @inheritdoc */
 	protected $primaryKey = 'id';
 
 	/** @inheritdoc */

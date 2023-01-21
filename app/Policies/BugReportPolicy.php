@@ -2,15 +2,15 @@
 
 namespace App\Policies;
 
-use App\Models\Issue;
+use App\Models\BugReport;
 use App\Models\SteamUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class IssuePolicy {
+class BugReportPolicy {
 	use HandlesAuthorization;
 
 	/**
-	 * maintainer list to see all issues and can manage the issues (close)
+	 * maintainer can list all and manage the bug reports (close, create new github issue or delete)
 	 */
 	public const MAINTAINER = [
 		'76561198054589426', // derpierre65
@@ -24,19 +24,19 @@ class IssuePolicy {
 		return request()->query->getBoolean('mine', false) && $steamUser->ID || $this->isMaintainer($steamUser);
 	}
 
-	public function view(SteamUser $steamUser, Issue $issue) {
-		return $issue->steamID === $steamUser->ID || $this->isMaintainer($steamUser);
+	public function view(SteamUser $steamUser, BugReport $bugReport) {
+		return $bugReport->steamID === $steamUser->ID || $this->isMaintainer($steamUser);
 	}
 
 	public function create(SteamUser $steamUser) {
 		return $steamUser->ID;
 	}
 
-	public function update(SteamUser $steamUser, Issue $issue) {
+	public function update(SteamUser $steamUser, BugReport $bugReport) {
 		return $this->isMaintainer($steamUser);
 	}
 
-	public function delete(SteamUser $steamUser, Issue $issue) {
+	public function delete(SteamUser $steamUser, BugReport $bugReport) {
 		return $this->isMaintainer($steamUser);
 	}
 }

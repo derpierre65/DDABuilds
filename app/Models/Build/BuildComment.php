@@ -22,8 +22,6 @@ class BuildComment extends Model implements ILikeableModel {
 	use HasSteamUser;
 	use TLikeable;
 
-	protected $table = 'build_comment';
-
 	protected $primaryKey = 'ID';
 
 	public $timestamps = false;

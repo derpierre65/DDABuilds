@@ -2,18 +2,18 @@
 
 namespace Tests\Browser\Tests;
 
-use App\Models\Issue;
+use App\Models\BugReport;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Components\Navigation;
 use Tests\Browser\Components\UserNavigation;
-use Tests\Browser\Pages\IssuePage;
+use Tests\Browser\Pages\BugReportPage;
 use Tests\DuskTestCase;
 
-class IssueTest extends DuskTestCase {
+class BugReportTest extends DuskTestCase {
 	protected static $title = '';
 
 	public function testCreate() {
-		Issue::query()->where('steamID', 1337)->delete();
+		BugReport::query()->where('steamID', 1337)->delete();
 
 		$this->browse(function (Browser $I) {
 			$I->loginAsTester();
@@ -35,7 +35,7 @@ class IssueTest extends DuskTestCase {
 			$I->click($this->getVueSelector('input', 'save'));
 
 			// check text on view
-			$I->on(new IssuePage())->checkValues($title, $description);
+			$I->on(new BugReportPage())->checkValues($title, $description);
 
 			// check if action menu is not visible for normal user
 			$I->assertMissing($this->getVueSelector('action-menu'));
@@ -53,13 +53,13 @@ class IssueTest extends DuskTestCase {
 			$I->visit('/');
 
 			$I->within(new UserNavigation(), function(Browser $I) {
-				$I->navigateTo('My Issues');
+				$I->navigateTo('My Bug Reports');
 			});
 
 			$I->waitForText(self::$title);
 			$I->clickLink(self::$title);
 
-			$I->on(new IssuePage())->checkValues(self::$title);
+			$I->on(new BugReportPage())->checkValues(self::$title);
 		});
 	}
 }

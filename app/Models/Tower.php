@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Tower extends Model
 {
-	protected $table = 'tower';
-
 	protected $primaryKey = 'ID';
 
 	public $timestamps = false;

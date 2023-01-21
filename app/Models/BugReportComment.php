@@ -13,12 +13,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read string  $steamID
  * @property-read string  $description
  */
-class IssueComment extends Model {
+class BugReportComment extends Model {
 	use HasSteamUser, HasFactory;
 
 	public const WAIT_TIME = 60;
-
-	protected $table = 'bug_report_comment';
 
 	public $timestamps = false;
 

@@ -5,17 +5,19 @@ namespace App\Models;
 use App\Models\Traits\HasSteamUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read int   $reportID
- * @property-read int   $time
- * @property-read string    $title
- * @property-read string    $steamID
- * @property-read string    $description
- * @property-read int   $status
+ * @property-read int $reportID
+ * @property-read int $time
+ * @property-read string $title
+ * @property-read string $steamID
+ * @property-read string $description
+ * @property-read int $status
  * @property-read SteamUser $user
  */
-class Issue extends Model {
+class BugReport extends Model
+{
 	use HasSteamUser, HasFactory;
 
 	public const STATUS_OPEN = 1;
@@ -23,8 +25,6 @@ class Issue extends Model {
 	public const STATUS_CLOSED = 2;
 
 	public const WAIT_TIME = 60;
-
-	protected $table = 'bug_report';
 
 	protected $perPage = 20;
 
@@ -44,11 +44,8 @@ class Issue extends Model {
 		'steamID',
 	];
 
-	public function getComments() {
-		return IssueComment::where('bugReportID', $this->reportID);
-	}
-
-	public function comments() {
-		return $this->hasMany(IssueComment::class, 'bugReportID', 'reportID');
+	public function comments() : HasMany
+	{
+		return $this->hasMany(BugReportComment::class, 'bugReportID', 'reportID');
 	}
 }

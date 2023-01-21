@@ -1,31 +1,31 @@
 <template>
 	<div class="container">
-		<table v-if="issues.length" :class="{'table-dark': $store.state.darkMode}" class="table table-bordered table-striped">
+		<table v-if="bugReports.length" :class="{'table-dark': $store.state.darkMode}" class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th v-if="showActionColumn" class="columnStatus">{{$t('issueList.action')}}</th>
-					<th class="columnDate">{{$t('issueList.created')}}</th>
-					<th class="columnText">{{$t('issueList.title')}}</th>
-					<th style="width:15%;">{{$t('issueList.status')}}</th>
+					<th v-if="showActionColumn" class="columnStatus">{{$t('bug_report.list.action')}}</th>
+					<th class="columnDate">{{$t('bug_report.list.created')}}</th>
+					<th class="columnText">{{$t('bug_report.list.title')}}</th>
+					<th style="width:15%;">{{$t('bug_report.list.status')}}</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="issue in issues" :key="issue.ID">
+				<tr v-for="report in bugReports" :key="report.ID">
 					<td v-if="showActionColumn" class="columnStatus">
-						<button v-if="issue.status !== 2" class="btn btn-primary" @click="closeIssue(issue)">
+						<button v-if="report.status !== 2" class="btn btn-primary" @click="closeBugReport(report)">
 							<i class="fa fa-lock" />
 						</button>
 					</td>
-					<td class="columnDate">{{formatDate(issue.time)}}</td>
+					<td class="columnDate">{{formatDate(report.time)}}</td>
 					<td class="columnText">
-						<router-link :to="issue.link">{{issue.title}}</router-link>
+						<router-link :to="report.link">{{report.title}}</router-link>
 					</td>
-					<td>{{$t('issue.status.' + (issue.status === 2 ? 'closed' : 'open'))}}</td>
+					<td>{{$t('bug_report.status.' + (report.status === 2 ? 'closed' : 'open'))}}</td>
 				</tr>
 			</tbody>
 		</table>
 		<div v-else class="alert alert-info">
-			{{$t('issueList.noEntries')}}
+			{{$t('bug_report.list.noEntries')}}
 		</div>
 
 		<app-pagination :current-page="page" :pages="pages" />
@@ -37,11 +37,11 @@ import axios from 'axios';
 import AppPagination from '../../components/AppPagination';
 import {hidePageLoader, showPageLoader} from '../../store';
 import formatDate from '../../utils/date';
-import {closeIssue} from '../../utils/issue';
+import {closeBugReport} from '../../utils/bug-report';
 import {formatSEOTitle} from '../../utils/string';
 
 export default {
-	name: 'IssueListView',
+	name: 'BugReportListView',
 	components: { AppPagination },
 	props: {
 		mineList: {
@@ -53,7 +53,7 @@ export default {
 		return {
 			pages: 0,
 			page: 0,
-			issues: [],
+			bugReports: [],
 		};
 	},
 	computed: {
@@ -71,29 +71,33 @@ export default {
 	},
 	methods: {
 		formatDate,
-		closeIssue(issue) {
-			closeIssue(issue);
-		},
+		closeBugReport,
 		fetchList() {
 			showPageLoader();
 
-			let mineList = this.mineList || false;
-			let page = this.$route.params.page || 0;
+			const params = {
+				page: this.$route.params.page || 0,
+			};
+			if (this.mineList) {
+				params.mine = 1;
+			}
 
 			axios
-				.get('/issues/?page=' + page + (mineList ? '&mine=1' : ''))
+				.get('/bug-reports/', {
+					params,
+				})
 				.then(({ data: { data, pagination } }) => {
-					for (let issue of data) {
-						issue.link = {
-							name: 'issue',
+					for (let bugReport of data) {
+						bugReport.link = {
+							name: 'bug-report',
 							params: {
-								id: issue.ID,
-								title: formatSEOTitle(issue.title),
+								id: bugReport.ID,
+								title: formatSEOTitle(bugReport.title),
 							},
 						};
 					}
 
-					this.issues = data;
+					this.bugReports = data;
 					this.pages = pagination.last_page;
 					this.page = pagination.current_page;
 				})
@@ -102,7 +106,7 @@ export default {
 						type: 'error',
 						text: this.$t('error.default'),
 					});
-					this.$router.push({name: 'home'});
+					this.$router.push({ name: 'home' });
 				})
 				.finally(hidePageLoader);
 		},

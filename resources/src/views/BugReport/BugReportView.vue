@@ -1,6 +1,6 @@
 <template>
-	<div v-acceptance-selector:page="'issueView'" class="container">
-		<div v-if="isMaintainer && issue.status !== 2" v-acceptance-selector:action-menu class="text-right">
+	<div v-acceptance-selector:page="'report-view'" class="container">
+		<div v-if="isMaintainer && bugReport.status !== 2" v-acceptance-selector:action-menu class="text-right">
 			<button class="btn btn-primary" @click="close">
 				Close
 			</button>
@@ -8,24 +8,24 @@
 		<table :class="{'table-dark': $store.state.darkMode}" class="table table-bordered marginTop">
 			<tbody>
 				<tr>
-					<td>{{$t('issueList.status')}}</td>
-					<td v-acceptance-selector:field="'status'">{{$t('issue.status.' + (issue.status === 2 ? 'closed' : 'open'))}}</td>
+					<td>{{$t('bug_report.list.status')}}</td>
+					<td v-acceptance-selector:field="'status'">{{$t('bug_report.status.' + (bugReport.status === 2 ? 'closed' : 'open'))}}</td>
 				</tr>
 				<tr>
-					<td>{{$t('issueList.created')}}</td>
-					<td>{{formatDate(issue.time)}}</td>
+					<td>{{$t('bug_report.list.created')}}</td>
+					<td>{{formatDate(bugReport.time)}}</td>
 				</tr>
 				<tr>
-					<td>{{$t('issue.createdBy')}}</td>
-					<td>{{issue.steamName}}</td>
+					<td>{{$t('bug_report.createdBy')}}</td>
+					<td>{{bugReport.steamName}}</td>
 				</tr>
 				<tr>
-					<td style="width:10%;">{{$t('issueList.title')}}</td>
-					<td v-acceptance-selector:field="'title'">{{issue.title}}</td>
+					<td style="width:10%;">{{$t('bug_report.list.title')}}</td>
+					<td v-acceptance-selector:field="'title'">{{bugReport.title}}</td>
 				</tr>
 				<tr>
-					<td>{{$t('issue.description')}}</td>
-					<td v-acceptance-selector:field="'description'" class="user-content" v-html="issue.description" />
+					<td>{{$t('bug_report.description')}}</td>
+					<td v-acceptance-selector:field="'description'" class="user-content" v-html="bugReport.description" />
 				</tr>
 			</tbody>
 		</table>
@@ -33,7 +33,7 @@
 		<div v-if="needWait > 0" class="alert alert-danger">
 			Please wait {{needWait}} seconds for the next comment.
 		</div>
-		<form v-else-if="issue.status !== 2" @submit.prevent="addComment">
+		<form v-else-if="bugReport.status !== 2" @submit.prevent="addComment">
 			<div class="card">
 				<div class="card-header text-center">
 					{{$t('comment.write')}}
@@ -58,7 +58,7 @@
 				</div>
 			</div>
 
-			<app-pagination :current-page="page" :pages="pages" :route-params="$route.params" route-name="issue" />
+			<app-pagination route-name="bug-report" :current-page="page" :pages="pages" :route-params="$route.params" />
 		</template>
 	</div>
 </template>
@@ -70,16 +70,16 @@ import AppPagination from '../../components/AppPagination';
 import ClassicCkeditor from '../../components/ClassicCkeditor';
 import {hidePageLoader, showPageLoader} from '../../store';
 import formatDate from '../../utils/date';
-import {closeIssue} from '../../utils/issue';
+import {closeBugReport} from '../../utils/bug-report';
 import {formatSEOTitle} from '../../utils/string';
 
 export default {
-	name: 'IssueView',
+	name: 'BugReportView',
 	components: { ClassicCkeditor, AppPagination },
 	data() {
 		return {
-			baseUrl: '/issues/' + this.$route.params.id,
-			issue: {},
+			baseUrl: '/bug-reports/' + this.$route.params.id,
+			bugReport: {},
 			comments: [],
 			pages: 0,
 			page: 0,
@@ -161,12 +161,12 @@ export default {
 			axios
 				.get(this.baseUrl)
 				.then(({ data }) => {
-					this.issue = data;
+					this.bugReport = data;
 
 					return this.fetchComments();
 				})
 				.then(() => {
-					let title = formatSEOTitle(this.issue.title);
+					let title = formatSEOTitle(this.bugReport.title);
 
 					// redirect to correct title url, if title not equal to the url title
 					if (this.$route.params.title !== title) {
@@ -186,7 +186,7 @@ export default {
 				.finally(hidePageLoader);
 		},
 		close() {
-			closeIssue(this.issue);
+			closeBugReport(this.bugReport);
 		},
 	},
 };

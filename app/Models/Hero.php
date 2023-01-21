@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Hero extends Model
 {
-	protected $table = 'hero';
-
 	protected $primaryKey = 'ID';
 
 	protected $guarded = [];

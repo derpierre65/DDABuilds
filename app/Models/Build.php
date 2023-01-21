@@ -56,8 +56,6 @@ class Build extends Model implements ILikeableModel
 	/** @var int private build status (only creator can view the build) */
 	public const STATUS_PRIVATE = 3;
 
-	protected $table = 'build';
-
 	protected $perPage = 21;
 
 	protected $primaryKey = 'ID';

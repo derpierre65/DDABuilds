@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Build;
-use App\Models\Issue;
-use App\Models\IssueComment;
+use App\Models\BugReport;
+use App\Models\BugReportComment;
 use App\Models\Like;
 use App\Models\SteamUser;
 use App\Services\Steam;
@@ -25,8 +25,8 @@ class UpdateSteamUser extends Migration
 
 	    $builds = Build::query()->whereDoesntHave('user')->get();
 	    $buildComments = Build\BuildComment::query()->whereDoesntHave('user')->get();
-	    $issues = Issue::query()->whereDoesntHave('user')->get();
-	    $issueComments = IssueComment::query()->whereDoesntHave('user')->get();
+	    $issues = BugReport::query()->whereDoesntHave('user')->get();
+	    $issueComments = BugReportComment::query()->whereDoesntHave('user')->get();
 	    $likes = Like::query()->whereDoesntHave('user')->get();
 	    $steamIDs = array_unique(array_merge(
 		    ($builds->pluck('steamID')->all()),

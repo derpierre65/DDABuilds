@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Notifiable;
-use App\Policies\IssuePolicy;
+use App\Policies\BugReportPolicy;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -24,8 +24,6 @@ class SteamUser extends Model implements AuthenticatableContract, AuthorizableCo
 	public const AVATAR_MEDIUM = 2;
 
 	public const AVATAR_BIG = 3;
-
-	protected $table = 'steam_user';
 
 	protected $primaryKey = 'ID';
 
@@ -67,7 +65,7 @@ class SteamUser extends Model implements AuthenticatableContract, AuthorizableCo
 	}
 
 	public function isMaintainer() : bool {
-		return in_array($this->ID, IssuePolicy::MAINTAINER);
+		return in_array($this->ID, BugReportPolicy::MAINTAINER);
 	}
 
 	public function authInfo() : array {

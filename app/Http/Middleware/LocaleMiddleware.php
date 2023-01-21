@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Locale;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -19,27 +18,28 @@ class LocaleMiddleware
 	 */
 	public function handle(Request $request, Closure $next)
 	{
-		$supportedLocales = Locale::getLocales();
+		$supportedLocales = config('app.locales');
 
 		$requestedLocale = $request->header('accept-language');
-		$locale = $supportedLocales[config('app.locale')] ?? reset($supportedLocales); // get default locale or first supportedLocale
 
-		// check if requestedLocale is a supported locale
-		if (isset($supportedLocales[$requestedLocale])) {
-			$locale = $supportedLocales[$requestedLocale];
-		}
-		else {
-			// no directly locale name given, try to find any supported locale from header value
+		// if requested locale is not in supported locales then find a supported locale
+		if (!in_array($requestedLocale, $supportedLocales)) {
+			// set fallback locale
+			$locale = config('app.fallback_locale');
+
+			// split requested locale and try to find a supported locale
 			foreach (explode(',', str_replace(';', ',', $requestedLocale)) as $value) {
-				if (isset($supportedLocales[$value])) {
-					$locale = $supportedLocales[$value];
+				if (in_array($value, $supportedLocales)) {
+					$locale = $value;
 					break;
 				}
 			}
 		}
+		else {
+			$locale = $requestedLocale;
+		}
 
-		App::setLocale($locale->languageCode);
-		App::getFacadeRoot()->localeID = $locale->ID;
+		App::setLocale($locale);
 
 		return $next($request);
 	}

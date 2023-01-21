@@ -23,7 +23,8 @@ class BuildCreateTest extends TestCase
 		$response->assertStatus(422);
 
 		$data = json_decode($response->getContent(), true);
-		$this->assertTrue($data['message'] === 'The given data was invalid.');
+		$this->assertNotEmpty($data['message']);
+		$this->assertNotEmpty($data['errors']);
 	}
 
 	public function buildCreate(array $overrideData = []) : Build
@@ -34,7 +35,7 @@ class BuildCreateTest extends TestCase
 		$heros = Hero::query()->where([['isHero', 1], ['isDisabled', 0]])->inRandomOrder()->limit(3)->get();
 
 		$data = array_merge([
-			'title' => 'My Title',
+			'title' => $this->faker->sentence(),
 			'description' => '',
 			'author' => $this->getTestUser()->name,
 			'timePerRun' => '123',

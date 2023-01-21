@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BuildWave extends Model {
 	/** @inheritDoc */
-	protected $table = 'build_wave';
-
-	/** @inheritDoc */
 	public $timestamps = false;
 
 	/** @inheritDoc */

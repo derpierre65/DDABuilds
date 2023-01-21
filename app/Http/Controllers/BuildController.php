@@ -9,7 +9,6 @@ use App\Models\Build;
 use App\Models\Build\BuildWave;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BuildController extends Controller
@@ -22,25 +21,19 @@ class BuildController extends Controller
 	public function index(Request $request)
 	{
 		$builds = Build::query()
-			->with(['map', 'gameMode', 'difficulty', 'likeValue'])
-			->sort($request->query('sortField'), $request->query('sortOrder'));
+			->with(['map', 'gameMode', 'difficulty', 'likeValue']);
+
+		$builds->sort($request->query('sortField'), $request->query('sortOrder'));
 
 		if ( auth()->id() ) {
 			if ( $request->query->getBoolean('mine') ) {
-				$builds->where('build.steamID', auth()->id());
+				$builds->where('steamID', auth()->id());
 			}
 			elseif ( $request->query->getBoolean('watch') ) {
-				$builds
-					->leftJoin('build_watch', function ($join) {
-						$join->on('build.ID', 'build_watch.buildID');
-						$join->where('build_watch.steamID', auth()->id());
-					})
-					->whereNotNull('build_watch.steamID');
+				$builds->whereHas('watchStatus');
 			}
 			elseif ( $request->query->getBoolean('liked') ) {
-				$builds->whereHas('likeValue', function ($query) {
-					$query->whereNotNull('likeValue');
-				});
+				$builds->whereHas('likeValue');
 			}
 		}
 
@@ -68,9 +61,9 @@ class BuildController extends Controller
 
 	public function store(BuildRequest $request)
 	{
-		$data = $request->all();
+		$data = $request->validated();
 		/** @var Build $build */
-		$build = Build::create(array_merge([
+		$build = Build::query()->create(array_merge([
 			'date' => time(),
 			'steamID' => auth()->id(),
 		], $data));
@@ -197,23 +190,17 @@ class BuildController extends Controller
 	{
 		$this->authorize('watch', $build);
 
-		$select = DB::select('SELECT * FROM build_watch WHERE buildID = ? AND steamID = ?', [
-			$build->ID,
-			auth()->id(),
-		]);
-
-		if ( count($select) > 0 ) {
-			DB::select('DELETE FROM build_watch WHERE buildID = ? AND steamID = ?', [
-				$build->ID,
-				auth()->id(),
-			]);
-
+		if ( $build->watchStatus ) {
+			Build\BuildWatch::query()->where([
+				'buildID' => $build->getKey(),
+				'steamID' => auth()->id(),
+			])->delete();
 			$watchStatus = 0;
 		}
 		else {
-			DB::insert('INSERT INTO build_watch (buildID, steamID) VALUES (?,?)', [
-				$build->ID,
-				auth()->id(),
+			$build->watchStatus()->create([
+				'buildID' => $build->getKey(),
+				'steamID' => auth()->id(),
 			]);
 			$watchStatus = 1;
 		}

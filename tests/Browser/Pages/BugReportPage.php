@@ -5,7 +5,7 @@ namespace Tests\Browser\Pages;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Traits\TBrowserHelper;
 
-class IssuePage extends Page {
+class BugReportPage extends Page {
 	use TBrowserHelper;
 
 	public function url() {
@@ -13,7 +13,7 @@ class IssuePage extends Page {
 	}
 
 	public function assert(Browser $browser) {
-		$browser->waitFor($this->getVueSelector('page', 'issueView'));
+		$browser->waitFor($this->getVueSelector('page', 'report-view'));
 	}
 
 	public function checkValues(Browser $I, string $title, string $description = null) {

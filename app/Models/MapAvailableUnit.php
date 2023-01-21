@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int $units
  */
 class MapAvailableUnit extends Model {
-	protected $table = 'map_available_unit';
-
 	public $incrementing = false;
 
 	public $timestamps = false;

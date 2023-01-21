@@ -13,7 +13,7 @@
 	<script>
 		window.APP = {
 			user: {!! auth()->id() ? json_encode(auth()->user()->authInfo()) : 'null' !!},
-			supportedLocales: {!! json_encode(\App\Models\Locale::getSupportedLocales()) !!}
+			supportedLocales: {!! json_encode(config('app.locales')) !!}
 		};
 	</script>
 	<script src="{{mix('assets/js/main.js')}}"></script>

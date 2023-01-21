@@ -1,23 +1,23 @@
 <template>
 	<div class="container">
-		<div v-if="needWait > 0" class="alert alert-danger" v-html="$t('issue.waiting', {count: needWait})" />
-		<div class="alert alert-danger" v-html="$t('issue.notRelated')" />
-		<div class="alert alert-info" v-html="$t('issue.info')" />
+		<div v-if="needWait > 0" class="alert alert-danger" v-html="$t('bug_report.waiting', {count: needWait})" />
+		<div class="alert alert-danger" v-html="$t('bug_report.notRelated')" />
+		<div class="alert alert-info" v-html="$t('bug_report.info')" />
 
 		<form @submit.prevent="submit">
 			<div class="form-group">
-				<label>{{$t('issueList.title')}}</label>
+				<label>{{$t('bug_report.list.title')}}</label>
 				<input v-model.trim="form.title" v-acceptance-selector:input="'title'" :class="{'is-valid': form.title.length >= 3}" class="form-control" required type="text">
-				<small class="form-text text-muted">{{$t('issueList.title_requirements')}}</small>
+				<small class="form-text text-muted">{{$t('bug_report.list.title_requirements')}}</small>
 			</div>
 
 			<div v-acceptance-selector:input="'description'" class="form-group">
-				<label>{{$t('issue.description')}}</label>
+				<label>{{$t('bug_report.description')}}</label>
 				<classic-ckeditor v-model="form.description" />
 			</div>
 
 			<label>
-				<input v-model="checkbox" v-acceptance-selector:input="'checkbox'" type="checkbox"> <span v-html="$t('issue.agreement')" />
+				<input v-model="checkbox" v-acceptance-selector:input="'checkbox'" type="checkbox"> <span v-html="$t('bug_report.agreement')" />
 			</label>
 
 			<div class="text-center marginTop">
@@ -33,7 +33,7 @@ import ClassicCkeditor from '../../components/ClassicCkeditor';
 import {formatSEOTitle} from '../../utils/string';
 
 export default {
-	name: 'IssueAddView',
+	name: 'BugReportAddView',
 	components: { ClassicCkeditor },
 	data() {
 		return {
@@ -62,7 +62,7 @@ export default {
 			}
 
 			axios
-				.post('/issues/', this.form)
+				.post('/bug-reports/', this.form)
 				.then(({ data }) => {
 					if (data.needWait) {
 						this.needWait = data.needWait;
@@ -76,7 +76,7 @@ export default {
 					}
 					else {
 						this.$router.push({
-							name: 'issue',
+							name: 'bug-report',
 							params: {
 								id: data.ID,
 								title: formatSEOTitle(data.title),

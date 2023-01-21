@@ -17,8 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class BuildTower extends Model
 {
-	protected $table = 'build_tower';
-
 	protected $primaryKey = null;
 
 	public $incrementing = false;

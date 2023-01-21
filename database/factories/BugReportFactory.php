@@ -2,15 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Issue;
+use App\Models\BugReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class IssueFactory extends Factory {
-	/** @inheritDoc */
-	protected $model = Issue::class;
+class BugReportFactory extends Factory {
+	protected $model = BugReport::class;
 
-	/** @inheritDoc */
-	public function definition() {
+	public function definition() : array
+	{
 		return [
 			'steamID'     => $this->faker->steamID,
 			'time'        => $this->faker->unixTime(),

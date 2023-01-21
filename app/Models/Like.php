@@ -16,8 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 class Like extends Model {
 	use HasSteamUser;
 
-	protected $table = 'like';
-
 	protected $primaryKey = null;
 
 	public $incrementing = false;

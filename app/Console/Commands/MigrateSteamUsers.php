@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Build;
-use App\Models\Issue;
-use App\Models\IssueComment;
+use App\Models\BugReport;
+use App\Models\BugReportComment;
 use App\Models\Like;
 use App\Models\SteamUser;
 use App\Services\Steam;

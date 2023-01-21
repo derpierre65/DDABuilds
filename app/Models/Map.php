@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Map extends Model
 {
-	protected $table = 'map';
-
 	protected $primaryKey = 'ID';
 
 	public $timestamps = false;

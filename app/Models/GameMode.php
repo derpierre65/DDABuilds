@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class GameMode extends Model {
 	/** @inheritdoc */
-	protected $table = 'game_mode';
-
-	/** @inheritdoc */
 	protected $primaryKey = 'id';
 
 	/** @inheritdoc */

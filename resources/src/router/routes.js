@@ -8,9 +8,9 @@ const NotFound = () => import('../views/NotFound');
 const IndexView = () => import('../views/IndexView');
 const BuildListView = () => import('../views/Build/BuildListView');
 const ChangelogView = () => import('../views/ChangelogView');
-const IssueListView = () => import('../views/Issue/IssueListView');
-const IssueView = () => import('../views/Issue/IssueView');
-const IssueAddView = () => import('../views/Issue/IssueAddView');
+const BugReportListView = () => import('../views/BugReport/BugReportListView');
+const BugReportView = () => import('../views/BugReport/BugReportView');
+const BugReportAddView = () => import('../views/BugReport/BugReportAddView');
 const BuildAddSelectView = () => import('../views/Build/BuildAddSelectView');
 const BuildAddView = () => import('../views/Build/BuildAddView');
 
@@ -58,36 +58,36 @@ const routes = [
 			isView: true,
 		},
 	},
-	// issues
+	// bug-reports
 	{
-		name: 'issueList',
-		path: '/issues/:page?',
-		component: IssueListView,
+		name: 'bug-reports',
+		path: '/bug-reports/:page?',
+		component: BugReportListView,
 		meta: {
 			requiredAuth: true,
 		},
 	},
 	{
-		name: 'issueAdd',
-		path: '/issue-add',
-		component: IssueAddView,
+		name: 'bug-report-add',
+		path: '/bug-report-add',
+		component: BugReportAddView,
 		meta: {
 			requiredAuth: true,
 		},
 	},
 	{
-		name: 'issue',
-		path: '/issue/:id-:title/:page?',
-		component: IssueView,
+		name: 'bug-report',
+		path: '/bug-report/:id-:title/:page?',
+		component: BugReportView,
 		meta: {
 			requiredAuth: true,
 		},
 	},
 	// user related pages
 	{
-		name: 'myIssueList',
-		path: '/my-issues/:page?',
-		component: IssueListView,
+		name: 'my-bug-reports',
+		path: '/my-bug-reports/:page?',
+		component: BugReportListView,
 		meta: {
 			requiredAuth: true,
 		},

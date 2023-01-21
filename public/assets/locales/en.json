@@ -68,9 +68,9 @@
 		"buildList": "Builds",
 		"buildAddSelect": "Create build",
 		"bugReportAdd": "Report Bug",
-		"issueList": "Bug Reports",
+		"bug_reports": "Bug Reports",
 		"myBuilds": "My Builds",
-		"myIssues": "My Issues",
+		"my_bug_reports": "My Bug Reports",
 		"likedBuilds": "Liked Builds",
 		"favoriteBuilds": "Favorite Builds",
 		"logout": "Logout"
@@ -154,25 +154,25 @@
 		"send": "Send",
 		"noMore": "No more comments."
 	},
-	"issue": {
+	"bug_report": {
 		"status": {
 			"open": "Open",
 			"closed": "Closed"
 		},
+		"list": {
+			"action": "Action",
+			"created": "Created",
+			"title": "Title",
+			"title_requirements": "Title requires 3 characters ore more",
+			"status": "Status",
+			"noEntries": "No bug reports found."
+		},
 		"createdBy": "Created by",
 		"description": "Description",
-		"agreement": "This is an issue about the DD:A Builder website and <strong>not related to anything in game</strong>.",
-		"info": "Please write issue reports only in <strong>English</strong> or <strong>German</strong>.",
-		"notRelated": "Issues reported here are community reviewed and the reviewers are not related to Chromatic Games or Dungeon Defenders: Awakened employees in anyway.",
-		"waiting": "Please wait {{count}} seconds for next issue report."
-	},
-	"issueList": {
-		"action": "Action",
-		"created": "Created",
-		"title": "Title",
-		"title_requirements": "Title requires 3 characters ore more",
-		"status": "Status",
-		"noEntries": "No issues found."
+		"agreement": "This is a bug report about the DD:A Builder website and <strong>not related to anything in game</strong>.",
+		"info": "Please write bug reports only in <strong>English</strong> or <strong>German</strong>.",
+		"notRelated": "Bug reports reported here are community reviewed and the reviewers are not related to Chromatic Games or Dungeon Defenders: Awakened employees in anyway.",
+		"waiting": "Please wait {{count}} seconds for next bug report."
 	},
 	"notification": {
 		"noEntities": "You have no notifications.",

@@ -2,13 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\IssueComment;
+use App\Models\BugReportComment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class IssueCommentFactory extends Factory {
-	protected $model = IssueComment::class;
+class BugReportCommentFactory extends Factory
+{
+	protected $model = BugReportComment::class;
 
-	public function definition() {
+	public function definition() : array
+	{
 		return [
 			'steamID' => $this->faker->steamID,
 			'time' => $this->faker->unixTime(),

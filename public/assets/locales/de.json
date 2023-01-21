@@ -68,9 +68,9 @@
 		"buildList": "Baupläne",
 		"buildAddSelect": "Bauplan erstellen",
 		"bugReportAdd": "Fehler melden",
-		"issueList": "Fehlerliste",
+		"bug_reports": "Fehlerliste",
 		"myBuilds": "Meine Pläne",
-		"myIssues": "Meine Fehler",
+		"my_bug_reports": "Meine Fehler",
 		"likedBuilds": "Gelikte Baupläne",
 		"favoriteBuilds": "Favorisierte Pläne",
 		"logout": "Abmelden"
@@ -154,10 +154,18 @@
 		"send": "Absenden",
 		"noMore": "Keine weiteren Kommentare."
 	},
-	"issue": {
+	"bug_report": {
 		"status": {
 			"open": "Offen",
 			"closed": "Geschlossen"
+		},
+		"list": {
+			"action": "Aktion",
+			"created": "Erstellungsdatum",
+			"title": "Titel",
+			"title_requirements": "Der Titel benötigt mindestens 3 Zeichen.",
+			"status": "Status",
+			"noEntries": "Es wurden keine Fehler gefunden."
 		},
 		"createdBy": "Erstellt von",
 		"description": "Beschreibung",
@@ -165,14 +173,6 @@
 		"info": "Bitte formuliere den Fehler ausschließlich in <strong>Englisch</strong> oder <strong>Deutsch</strong>.",
 		"notRelated": "Die hier gemeldeten Fehler werden von der Community geprüft und die Prüfer stehen in keiner Beziehung zu Chromatic Games oder Dungeon Defenders: Awakened Mitarbeiter.",
 		"waiting": "Bitte warte {{count}} Sekunden für die nächste Fehlermeldung."
-	},
-	"issueList": {
-		"action": "Aktion",
-		"created": "Erstellungsdatum",
-		"title": "Titel",
-		"title_requirements": "Der Titel benötigt mindestens 3 Zeichen.",
-		"status": "Status",
-		"noEntries": "Es wurden keine Fehler gefunden."
 	},
 	"notification": {
 		"noEntities": "Du hast keine Benachrichtigungen",
