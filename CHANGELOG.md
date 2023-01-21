@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Map will scroll with the page for a better tower placement.
 
+### Changed
+- Compressed all images and saved up to 70% filesize, which also reduces the loading speed.
+
 ### Fixed
 - Translation keys for new towers fixed.
 - Fixed tower size for specific towers.
