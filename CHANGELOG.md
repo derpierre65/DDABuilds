@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Compressed all images and saved up to 70% filesize, which also reduces the loading speed.
+- Optimize thumbnail generation performance.
 
 ### Fixed
 - Translation keys for new towers fixed.

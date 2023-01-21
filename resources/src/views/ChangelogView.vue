@@ -39,10 +39,7 @@ export default {
 		showPageLoader();
 		axios
 			.get('/changelogs')
-			.then(({ data }) => {
-				console.log(data);
-				this.changelogs = data;
-			})
+			.then(({ data }) => this.changelogs = data)
 			.finally(hidePageLoader);
 	},
 };

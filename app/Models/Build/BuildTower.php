@@ -4,6 +4,7 @@ namespace App\Models\Build;
 
 use App\Models\Tower;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read int $towerID
@@ -33,12 +34,12 @@ class BuildTower extends Model
 		'overrideUnits',
 	];
 
-	public function towerInfo()
+	public function towerInfo() : HasOne
 	{
 		return $this->hasOne(Tower::class, 'ID', 'towerID');
 	}
 
-	public function getPublicPath()
+	public function getPublicPath() : string
 	{
 		$name = $this->towerInfo->name;
 		if ( $this->towerInfo->isResizable ) {

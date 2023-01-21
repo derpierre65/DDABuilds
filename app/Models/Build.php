@@ -239,7 +239,7 @@ class Build extends Model implements ILikeableModel
 		}
 
 		/** @var BuildTower $tower */
-		foreach ( $this->waves()->first()->towers()->get() as $tower ) {
+		foreach ( $this->waves()->first()->towers()->with(['towerInfo', 'towerInfo.hero'])->get() as $tower ) {
 			$towerSizeX = $towerSizeY = 35;
 
 			if ( $tower->towerInfo->hero->name === 'monk' ) {
@@ -254,7 +254,7 @@ class Build extends Model implements ILikeableModel
 
 			$towerResource = imagecreatefrompng($tower->getPublicPath());
 			if ( $towerSizeX && $towerSizeY ) {
-				$towerResource = imagescale($towerResource, $towerSizeX, $towerSizeY);
+				$towerResource = imagescale($towerResource, $towerSizeX, $towerSizeY, IMG_BICUBIC_FIXED);
 			}
 			else {
 				$imageInfo = getimagesize($tower->getPublicPath());
