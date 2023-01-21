@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Translation keys for new towers fixed.
 - Fixed tower size for specific towers.
 - The image for placing new Series-EVA Towers have now the correct image and will not be replaced after start dragging.
+- Fixed search filters in build list.
 
 ## [2.0.5] - 2023-01-20
 ### Added

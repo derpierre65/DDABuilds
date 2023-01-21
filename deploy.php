@@ -15,8 +15,7 @@ add('shared_dirs', []);
 add('writable_dirs', []);
 
 host('127.0.0.1')
-	->forwardAgent()
-	// ->identityFile('~/.ssh/id_rsa')
+	->identityFile('~/.ssh/root_rsa')
 	->set('writable_mode', 'chmod')
 	->set('deploy_path', '/var/www/{{application}}');
 
@@ -28,7 +27,7 @@ after('deploy:failed', 'deploy:unlock');
 before('deploy:symlink', 'artisan:migrate');
 
 task('reload:php-fpm', function () {
-	run('sudo service php8.0-fpm reload');
+	run('sudo service php7.4-fpm reload');
 });
 
 task('artisan:cache:clear', function () {
@@ -50,5 +49,5 @@ after('deploy:shared', 'npm:install');
 after('npm:install', 'npm:build');
 
 // Reload php-fpm process.
-// after('deploy', 'reload:php-fpm');
-// after('rollback', 'reload:php-fpm');
+after('deploy', 'reload:php-fpm');
+after('rollback', 'reload:php-fpm');
