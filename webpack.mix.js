@@ -10,7 +10,7 @@ if (mix.inProduction()) {
 
 mix.webpackConfig({
 	output: {
-		chunkFilename: 'assets/js/[name].js',
+		chunkFilename: 'assets/js/[name].[hash:4].js',
 	},
 });
 
