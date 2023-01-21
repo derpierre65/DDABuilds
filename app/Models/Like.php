@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasSteamUser;
+use App\Models\Traits\HasUserRelation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read string $objectType
- * @property-read int $objectID
- * @property-read string $steamID
- * @property-read int $likeValue
- * @property-read string $date
- * @property-read string $notificationID
+ * @property string $object_type
+ * @property int $object_id
+ * @property string $user_id
+ * @property int $like_value
+ * @property string $notification_id
+ * @property-read Carbon $created_at
+ * @property-read Carbon $updated_at
  */
-class Like extends Model {
-	use HasSteamUser;
+class Like extends Model
+{
+	use HasUserRelation;
 
 	protected $primaryKey = null;
 
@@ -22,12 +25,5 @@ class Like extends Model {
 
 	public $timestamps = false;
 
-	protected $fillable = [
-		'objectType',
-		'objectID',
-		'steamID',
-		'likeValue',
-		'date',
-		'notificationID',
-	];
+	protected $guarded = [];
 }

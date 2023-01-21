@@ -21,12 +21,12 @@
 				<li v-if="isEditMode" class="nav-item" @click="waveAdd">
 					<a class="nav-link pointer">+</a>
 				</li>
-				<li v-if="build.ID" class="nav-item" @click="waveSelect(-1)">
+				<li v-if="build.id" class="nav-item" @click="waveSelect(-1)">
 					<a :class="{active: selectedWave === -1}" class="nav-link pointer">{{$t('build.comments')}} (<span>{{build.comments}}</span>)</a>
 				</li>
 			</ul>
 			<keep-alive>
-				<build-comment-list v-if="selectedWave === -1" :build-id="build.ID" @new-comment="build.comments ++" />
+				<build-comment-list v-if="selectedWave === -1" :build-id="build.id" @new-comment="build.comments ++" />
 			</keep-alive>
 			<template v-if="selectedWave !== -1">
 				<div class="row">
@@ -38,18 +38,18 @@
 							<div v-for="(entry, key) of waveTowersFiltered"
 								:key="key"
 								ref="placedTower"
-								:data-class="entry.tower.heroClassID"
+								:data-class="entry.tower.hero_id"
 								:style="{position: 'absolute', left: entry.placed.x + 'px', top: entry.placed.y + 'px', transform: 'rotate(' + entry.placed.rotation + 'deg)'}"
-								:title="$t('tower.' + entry.tower.name) + (entry.tower.isResizable ? ' (' + entry.placed.size + ')' : '')"
+								:title="$t('tower.' + entry.tower.name) + (entry.tower.is_resizable ? ' (' + entry.placed.size + ')' : '')"
 								class="tower-container pointer"
 								@mouseout="towerMouseOut(entry.placed, key)"
 								@mouseover.stop="towerMouseOver(entry.placed, key)"
 								@contextmenu.prevent="towerDelete(entry.placed)">
-								<img :alt="entry.tower.name" :src="`/assets/images/tower/${entry.tower.name}${entry.placed.size ? '_'+(entry.placed.size - entry.tower.unitCost) : ''}.png`" class="tower" :style="getTowerStyle(entry)">
-								<div v-if="isEditMode && entry.placed.mouseOver && (entry.tower.isResizable || entry.tower.isRotatable)" class="menu">
-									<i v-if="entry.tower.isResizable" class="fa fa-minus du-decrease" :style="entry.placed.size > entry.tower.unitCost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, -1)" />
-									<i v-if="entry.tower.isRotatable" class="fa fa-repeat" @mousedown="towerMouseDown(entry.placed, key)" />
-									<i v-if="entry.tower.isResizable" class="fa fa-plus du-increase" :style="entry.placed.size < entry.tower.maxUnitCost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, 1)" />
+								<img :alt="entry.tower.name" :src="`/assets/images/tower/${entry.tower.name}${entry.placed.size ? '_'+(entry.placed.size - entry.tower.unit_cost) : ''}.png`" class="tower" :style="getTowerStyle(entry)">
+								<div v-if="isEditMode && mouseOver === key && (entry.tower.is_resizable || entry.tower.is_rotatable)" class="menu">
+									<i v-if="entry.tower.is_resizable" class="fa fa-minus du-decrease" :style="entry.placed.size > entry.tower.unit_cost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, -1)" />
+									<i v-if="entry.tower.is_rotatable" class="fa fa-repeat" @mousedown="towerMouseDown(entry.placed, key)" />
+									<i v-if="entry.tower.is_resizable" class="fa fa-plus du-increase" :style="entry.placed.size < entry.tower.max_unit_cost ? '' : 'opacity: 0.5'" @click="towerUpdateSize(entry.placed, 1)" />
 								</div>
 							</div>
 						</div>
@@ -60,12 +60,12 @@
 							<div class="col-sm-12">
 								<div class="card">
 									<div class="card-header">
-										<i v-if="canLike" :class="{'fa-star-o': !build.watchStatus, 'fa-star': build.watchStatus}" class="fa pointer text-warning"
+										<i v-if="canLike" :class="{'fa-star-o': !build.watch_status, 'fa-star': build.watch_status}" class="fa pointer text-warning"
 											@click="buildWatch" />
-										<i v-if="build.buildStatus !== buildStatusPublic" v-b-tooltip.hover="$t('build.isPrivate')" class="fa fa-eye-slash" />
-										<span v-if="build.rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
-										<span v-if="build.afkAble" class="badge badge-success">{{$t('build.afkAble')}}</span>
-										<span v-if="build.hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
+										<i v-if="build.build_status !== buildStatusPublic" v-b-tooltip.hover="$t('build.isPrivate')" class="fa fa-eye-slash" />
+										<span v-if="build.is_rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
+										<span v-if="build.is_afk_able" class="badge badge-success">{{$t('build.afkAble')}}</span>
+										<span v-if="build.is_hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
 										<template v-if="build.title">
 											{{build.title}}
 										</template>
@@ -114,22 +114,22 @@
 														<i class="fa fa-gamepad" /> {{$t('gameMode.' + build.gameModeName)}}
 													</li>
 													<li v-if="build.date">
-														<i class="fa fa-clock-o" /> {{formatDate(build.date)}}
+														<i class="fa fa-clock-o" /> {{formatDate(build.created_at)}}
 													</li>
-													<li v-if="build.expPerRun">
-														{{$t('build.expPerRun')}}: {{build.expPerRun}}
+													<li v-if="build.exp_per_run">
+														{{$t('build.expPerRun')}}: {{build.exp_per_run}}
 													</li>
-													<li v-if="build.timePerRun">
-														{{$t('build.timePerRun')}}: {{build.timePerRun}}
+													<li v-if="build.time_per_run">
+														{{$t('build.timePerRun')}}: {{build.time_per_run}}
 													</li>
 													<li>{{$t('build.manaUsed')}}: {{manaUsed}}</li>
 													<li>{{$t('build.manaUpgradeUsed')}}: {{manaUpgrade}}</li>
 													<li>DU: <strong><span>{{unitsUsed}}</span>/<span>{{unitsMax}}</span></strong></li>
 												</ul>
 
-												<build-stats-table v-model="build.heroStats" :edit-mode="isEditMode" :hero-list="heroList" />
+												<build-stats-table v-model="build.hero_stats" :hero-list="heroList" />
 
-												<button v-if="build.ID" :class="['btn', {'btn-default': !build.likeValue, 'btn-success': build.likeValue, disabled: !canLike}]"
+												<button v-if="build.id" :class="['btn', {'btn-default': !build.likeValue, 'btn-success': build.likeValue, disabled: !canLike}]"
 													:disabled="!canLike" @click="buildLike">
 													<i class="fa fa-thumbs-up" /> {{build.likes}}
 												</button>
@@ -145,27 +145,27 @@
 									</div>
 									<div class="card-body">
 										<div class="card-text">
-											<img v-for="hero in heros" :key="hero.ID" v-b-tooltip.hover="$t('hero.' + hero.name)"
-												:class="{disabled: disabledHeros.includes(hero.ID)}"
-												:src="'/assets/images/hero/' + hero.name + '.png'" class="disableTowerCheckbox" @click="toggleHeroClass(hero.ID)">
+											<img v-for="hero in heros" :key="hero.id" v-b-tooltip.hover="$t('hero.' + hero.name)"
+												:class="{disabled: disabledHeros.includes(hero.id)}"
+												:src="'/assets/images/hero/' + hero.name + '.png'" class="disableTowerCheckbox" @click="toggleHeroClass(hero.id)">
 										</div>
 									</div>
 								</div>
 							</div>
 							<template v-if="isEditMode">
-								<div v-for="hero in heroPanels" :key="hero.ID" :class="{'col-sm-6': hero.towers.length < 8, 'col-sm-12': hero.towers.length >= 8}">
+								<div v-for="hero in heroPanels" :key="hero.id" :class="{'col-sm-6': hero.towers.length < 8, 'col-sm-12': hero.towers.length >= 8}">
 									<div class="card">
 										<div class="card-header">
 											{{$t('hero.' + hero.name)}}
 										</div>
 										<div class="card-body card-hero-body">
 											<div v-for="tower of hero.towers"
-												:key="tower.ID"
-												:class="{disabled: unitsUsed + tower.unitCost > unitsMax}"
-												:data-class="hero.ID"
-												:data-tower="tower.ID"
+												:key="tower.id"
+												:class="{disabled: unitsUsed + tower.unit_cost > unitsMax}"
+												:data-class="hero.id"
+												:data-tower="tower.id"
 												class="tower-container pointer dummy">
-												<img v-b-tooltip.hover="`${$t(`tower.${tower.name}`)} (${tower.unitCost})`" :src="`/assets/images/tower/${tower.name}.png`" class="tower">
+												<img v-b-tooltip.hover="`${$t(`tower.${tower.name}`)} (${tower.unit_cost})`" :src="`/assets/images/tower/${tower.name}.png`" class="tower">
 											</div>
 										</div>
 									</div>
@@ -177,18 +177,10 @@
 											{{$t('build.details')}}
 										</div>
 										<div class="card-body">
-											<div class="form-group">
-												<h5 class="text-center">
-													{{$t('build.requiredAttributes')}}
-												</h5>
-
-												<build-stats-table v-model="build.heroStats" :hero-list="heroList" edit-mode />
-											</div>
-
 											<!-- build status -->
 											<div class="form-group">
 												<label for="buildStatus">{{$t('build.buildStatus')}}</label>
-												<select id="buildStatus" v-model.number="build.buildStatus" class="form-control">
+												<select id="buildStatus" v-model.number="build.build_status" class="form-control">
 													<option v-for="i in 3" :key="i" :value="i">
 														{{$t('build.status.' + (i - 1))}}
 													</option>
@@ -198,22 +190,22 @@
 											<!-- difficulty -->
 											<div class="form-group">
 												<label for="difficulty">{{$t('build.difficulty')}}</label>
-												<select id="difficulty" v-model="build.difficultyID" :class="'difficulty-' + build.difficultyID" class="form-control">
-													<option v-for="difficulty in difficulties" :key="difficulty.ID" :class="'difficulty-' + difficulty.ID" :value="difficulty.ID">
+												<select id="difficulty" v-model="build.difficulty_id" :class="`difficulty-${build.difficulty_id}`" class="form-control">
+													<option v-for="difficulty in difficulties" :key="difficulty.id" :class="'difficulty-' + difficulty.id" :value="difficulty.id">
 														{{$t('difficulty.' + difficulty.name)}}
 													</option>
 												</select>
 											</div>
 											<div class="form-group">
-												<label :class="{'is-invalid': errors.gameModeID}">{{$t('build.gameMode')}}</label>
+												<label :class="{'is-invalid': errors.game_mode_id}">{{$t('build.gameMode')}}</label>
 												<br>
-												<div v-for="gameMode in gameModes" :key="gameMode.ID" class="form-check form-check-inline">
-													<input :id="'buildGameMode' + gameMode.ID" v-model="build.gameModeID" :value="gameMode.ID" class="form-check-input"
+												<div v-for="gameMode in gameModes" :key="gameMode.id" class="form-check form-check-inline">
+													<input :id="'buildGameMode' + gameMode.id" v-model="build.game_mode_id" :value="gameMode.id" class="form-check-input"
 														type="radio">
-													<label :for="'buildGameMode' + gameMode.ID" class="form-check-label">{{$t('gameMode.' + gameMode.name)}}</label>
+													<label :for="'buildGameMode' + gameMode.id" class="form-check-label">{{$t('gameMode.' + gameMode.name)}}</label>
 												</div>
-												<template v-if="errors.gameModeID">
-													<div v-for="(error, key) in errors.gameModeID" :key="key" class="invalid-feedback">
+												<template v-if="errors.game_mode_id">
+													<div v-for="(error, key) in errors.game_mode_id" :key="key" class="invalid-feedback">
 														{{error}}
 													</div>
 												</template>
@@ -223,28 +215,36 @@
 												<label>{{$t('build.modifiers')}}</label>
 												<br>
 												<div class="form-check">
-													<input id="buildHardcore" v-model="build.hardcore" class="form-check-input" type="checkbox">
+													<input id="buildHardcore" v-model="build.is_hardcore" class="form-check-input" type="checkbox">
 													<label class="form-check-label" for="buildHardcore"> {{$t('build.hardcore')}}</label>
 												</div>
 												<div class="form-check">
-													<input id="buildAFKAble" v-model="build.afkAble" class="form-check-input" type="checkbox">
+													<input id="buildAFKAble" v-model="build.is_afk_able" class="form-check-input" type="checkbox">
 													<label class="form-check-label" for="buildAFKAble"> {{$t('build.afkAble')}}</label>
 												</div>
 												<div class="form-check">
-													<input id="buildRifted" v-model="build.rifted" class="form-check-input" type="checkbox">
+													<input id="buildRifted" v-model="build.is_rifted" class="form-check-input" type="checkbox">
 													<label class="form-check-label" for="buildRifted"> {{$t('build.rifted')}}</label>
 												</div>
 											</div>
 
 											<div class="form-group">
 												<label for="buildExpPerRun">{{$t('build.expPerRun')}}</label>
-												<input id="buildExpPerRun" v-model="build.expPerRun" :placeholder="$t('build.expPerRun')" class="form-control" maxlength="20"
+												<input id="buildExpPerRun" v-model="build.exp_per_run" :placeholder="$t('build.expPerRun')" class="form-control" maxlength="20"
 													type="text">
 											</div>
 											<div class="form-group">
 												<label for="buildTimePerRun">{{$t('build.timePerRun')}}</label>
-												<input id="buildTimePerRun" v-model="build.timePerRun" :placeholder="$t('build.timePerRun')" class="form-control" maxlength="20"
+												<input id="buildTimePerRun" v-model="build.time_per_run" :placeholder="$t('build.timePerRun')" class="form-control" maxlength="20"
 													type="text">
+											</div>
+
+											<div class="form-group">
+												<h5 class="text-center">
+													{{$t('build.requiredAttributes')}}
+												</h5>
+
+												<build-stats-table v-model="build.hero_stats" :hero-list="heroList" edit-mode />
 											</div>
 										</div>
 									</div>
@@ -276,7 +276,7 @@
 				<button class="btn btn-secondary" @click="buildChangeMode(true)">
 					{{$t('build.viewerMode')}}
 				</button>
-				<button v-if="build.ID" class="btn btn-danger" @click="buildDelete">
+				<button v-if="build.id" class="btn btn-danger" @click="buildDelete">
 					{{$t('build.delete')}}
 				</button>
 			</template>
@@ -318,15 +318,15 @@ export default {
 				title: '',
 				author: this.$store.state.authentication.user.name,
 				description: '',
-				difficultyID: 1,
-				gameModeID: 0,
-				buildStatus: 1,
-				timePerRun: '',
-				expPerRun: '',
-				heroStats: {},
-				hardcore: false,
-				afkAble: false,
-				rifted: false,
+				difficulty_id: 1,
+				game_mode_id: 0,
+				build_status: 1,
+				time_per_run: '',
+				exp_per_run: '',
+				hero_stats: [],
+				is_hardcore: false,
+				is_afk_able: false,
+				is_rifted: false,
 			},
 			selectedWave: 0,
 			placedTowers: [],
@@ -343,6 +343,7 @@ export default {
 			loaded: false,
 			demoMode: false,
 			rotateTower: false,
+			mouseOver: null,
 		};
 	},
 	computed: {
@@ -356,14 +357,14 @@ export default {
 			};
 		},
 		canLike() {
-			if (!this.$store.state.authentication.user.ID) {
+			if (!this.$store.getters['authentication/isLoggedIn']) {
 				return false;
 			}
 
 			return !this.canEdit;
 		},
 		canEdit() {
-			return !this.build.ID || this.build.steamID === this.$store.state.authentication.user.ID;
+			return !this.build.id || this.build.user_id === this.$store.state.authentication.user.id;
 		},
 		isEditMode() {
 			if (this.demoMode) {
@@ -374,8 +375,8 @@ export default {
 		},
 		waveTowers() {
 			let towers = [];
-			for (let tower of this.placedTowers) {
-				if (tower.waveID === this.selectedWave) {
+			for (const tower of this.placedTowers) {
+				if (tower.wave_id === this.selectedWave) {
 					towers.push(tower);
 				}
 			}
@@ -384,9 +385,9 @@ export default {
 		},
 		waveTowersFiltered() {
 			let towers = [];
-			for (let placed of this.waveTowers) {
-				let tower = this.towers[placed.ID];
-				if (!this.disabledHeros.includes(tower.heroClassID)) {
+			for (const placed of this.waveTowers) {
+				let tower = this.towers[placed.id];
+				if (!this.disabledHeros.includes(tower.hero_id)) {
 					towers.push({
 						placed: placed,
 						tower,
@@ -400,50 +401,47 @@ export default {
 			return this.waveTowers.length * 2620;
 		},
 		manaUsed() {
-			let manaCost = 0;
-			for (let tower of this.waveTowers) {
-				manaCost += this.towers[tower.ID].manaCost;
+			let manaUsed = 0;
+			for (const tower of this.waveTowers) {
+				manaUsed += this.towers[tower.id].mana;
 			}
 
-			return manaCost;
+			return manaUsed;
 		},
 		unitsUsed() {
 			let units = 0;
-			for (let tower of this.waveTowers) {
-				let unitCount = tower.size ? tower.size : this.towers[tower.ID].unitCost;
+			for (const tower of this.waveTowers) {
+				let unitCount = tower.size ? tower.size : this.towers[tower.id].unit_cost;
 				units += unitCount;
 			}
 
 			return units;
 		},
 		unitsMax() {
-			if (this.map.difficultyUnits && this.map.difficultyUnits.length) {
-				for (let difficulty of this.map.difficultyUnits) {
-					if (this.build.difficultyID === difficulty.difficultyID) {
-						return difficulty.units;
-					}
+			for (const difficulty of this.map.difficulty_units || []) {
+				if (this.build.difficulty_id === difficulty.difficulty_id) {
+					return difficulty.units;
 				}
 			}
 
 			return this.map.units || 0;
 		},
 		heroList() {
-			let heros = {};
-
-			for (let hero of this.heros) {
-				if (hero.isHero) {
-					heros[hero.ID] = hero.name;
+			const heroes = {};
+			for (const hero of this.heros) {
+				if (hero.is_hero) {
+					heroes[hero.id] = hero.name;
 				}
 			}
 
-			return heros;
+			return heroes;
 		},
 	},
 	watch: {
 		'$route.params.id'() {
 			this.fetch();
 		},
-		'$route.params.mapID'() {
+		'$route.params.mapId'() {
 			this.fetch();
 		},
 		selectedWave(newValue, oldValue) {
@@ -493,13 +491,12 @@ export default {
 					let offset = canvas.offset();
 
 					this.placedTowers.push({
-						ID: towerID,
-						waveID: this.selectedWave,
-						size: tower.unitCost < tower.maxUnitCost ? tower.unitCost : 0,
+						id: towerID,
+						wave_id: this.selectedWave,
+						size: tower.unit_cost < tower.max_unit_cost ? tower.unit_cost : 0,
 						x: ui.offset.left - offset.left,
 						y: ui.offset.top - offset.top,
 						rotation: 0,
-						mouseOver: false,
 					});
 				},
 			});
@@ -516,11 +513,11 @@ export default {
 			this.selectedWave = 0;
 			let loading;
 			if (!this.isView) {
-				loading = this.fetchMap(this.$route.params.mapID);
+				loading = this.fetchMap(this.$route.params.mapId, this.build);
 			}
 			else {
 				loading = axios
-					.get('/builds/' + this.$route.params.id)
+					.get(`/builds/${this.$route.params.id}/`)
 					.then(async ({ data: data }) => {
 						// redirect to correct title url, if title not equal to the url title
 						let title = formatSEOTitle(data.title);
@@ -532,48 +529,39 @@ export default {
 						}
 
 						// fetch map data
-						await this.fetchMap(data.mapID);
+						await this.fetchMap(data.map_id, data);
 
-						// parse hero stats
-						let heroStats = this.build.heroStats;
-						let towers = [];
-						for (let stats of data.heroStats) {
-							heroStats[stats.heroID] = stats;
-						}
-						data.heroStats = heroStats;
-
-						// load waves
-						let waveNames = [];
-						let waveID = 0;
-						for (let wave of data.waves) {
+						const towers = [];
+						const waveNames = [];
+						let buildWaveId = 0;
+						for (const wave of data.waves) {
 							waveNames.push(wave.name);
-							for (let tower of wave.towers) {
+							for (const tower of wave.towers) {
 								towers.push({
-									ID: tower.towerID,
-									waveID,
-									size: tower.overrideUnits,
+									id: tower.id,
+									wave_id: buildWaveId,
 									x: tower.x,
 									y: tower.y,
 									rotation: tower.rotation,
-									mouseOver: false,
+									size: tower.size,
 								});
 							}
 
-							waveID++;
+							buildWaveId++;
 						}
 
 						this.waveNames = waveNames;
 						this.build = data;
 						this.placedTowers = towers;
 					})
-					.catch((response) => {
-						if (response.status === 403) {
+					.catch((error) => {
+						if (error.status === 403) {
 							this.$notify({
 								type: 'error',
 								text: this.$t('error.403'),
 							});
 						}
-						else if (response.status === 404) {
+						else if (error.status === 404) {
 							this.$notify({
 								type: 'error',
 								text: this.$t('build.error.404'),
@@ -594,14 +582,15 @@ export default {
 			});
 			loading.finally(hidePageLoader);
 		},
-		fetchMap(mapID) {
+		fetchMap(mapId, build) {
 			return axios
-				.get('/maps/editor/' + mapID)
+				.get(`/maps/editor/${mapId}/`)
 				.then(({ data }) => {
-					let towers = {};
-					for (let hero of data.heros) {
-						if (hero.isHero && !this.build.heroStats[hero.ID]) {
-							Vue.set(this.build.heroStats, hero.ID, {
+					const towers = {};
+					for (const hero of data.heroes) {
+						if (hero.is_hero && !build.hero_stats.find((stat) => stat.id === hero.id)) {
+							build.hero_stats.push({
+								id: hero.id,
 								hp: 0,
 								damage: 0,
 								range: 0,
@@ -609,13 +598,13 @@ export default {
 							});
 						}
 
-						for (let tower of hero.towers) {
-							towers[tower.ID] = tower;
+						for (const tower of hero.towers) {
+							towers[tower.id] = tower;
 						}
 					}
 
 					this.map = data.map;
-					this.heros = data.heros;
+					this.heros = data.heroes;
 					this.difficulties = data.difficulties;
 					this.gameModes = data.gameModes;
 					this.towers = towers;
@@ -625,7 +614,7 @@ export default {
 				});
 		},
 		towerMouseOver(tower, key) {
-			if (!this.towers[tower.ID].isRotatable || this.rotateTower || !this.isEditMode) {
+			if (!this.towers[tower.id].is_rotatable || this.rotateTower || !this.isEditMode) {
 				return;
 			}
 
@@ -633,7 +622,7 @@ export default {
 				window.clearTimeout(tower.mouseoverTimeout);
 			}
 
-			tower.mouseOver = true;
+			this.mouseOver = key;
 
 			let defense = $(this.$refs.placedTower[key]);
 			defense.on('wheel', (event) => {
@@ -718,30 +707,29 @@ export default {
 			}
 
 			tower.mouseoverTimeout = window.setTimeout(() => {
-				tower.mouseOver = false;
+				this.mouseOver = null;
 				$(this.$refs.placedTower[key]).off('wheel');
 			}, 50);
 		},
 		towerUpdateSize(tower, update) {
 			const newTowerSize = tower.size + update;
-			const towerInfo = this.towers[tower.ID];
-			if (newTowerSize < towerInfo.unitCost || newTowerSize > towerInfo.maxUnitCost) {
+			const towerInfo = this.towers[tower.id];
+			if (newTowerSize < towerInfo.unit_cost || newTowerSize > towerInfo.max_unit_cost) {
 				return;
 			}
 
 			tower.size += update;
 		},
 		towerDelete(tower) {
-			let idx = this.placedTowers.indexOf(tower);
-			this.placedTowers.splice(idx, 1);
+			this.placedTowers.splice(this.placedTowers.indexOf(tower), 1);
 		},
-		toggleHeroClass(heroID) {
-			let idx = this.disabledHeros.indexOf(heroID);
+		toggleHeroClass(heroId) {
+			let idx = this.disabledHeros.indexOf(heroId);
 			if (idx >= 0) {
 				this.disabledHeros.splice(idx, 1);
 			}
 			else {
-				this.disabledHeros.push(heroID);
+				this.disabledHeros.push(heroId);
 			}
 		},
 		startDraggable() {
@@ -753,7 +741,7 @@ export default {
 					const towerStyle = this.getTowerStyle({ tower });
 					let towerImage = `/assets/images/tower/${tower.name}.png`;
 
-					if (tower.isResizable) {
+					if (tower.is_resizable) {
 						towerImage = towerImage.replace('.png', '_0.png');
 					}
 
@@ -787,23 +775,23 @@ export default {
 		waveAdd() {
 			this.selectedWave = this.waveNames.push('custom wave') - 1;
 		},
-		waveSelect(waveID) {
-			if (waveID <= this.waveNames.length + 1) {
-				this.selectedWave = waveID;
+		waveSelect(waveId) {
+			if (waveId <= this.waveNames.length + 1) {
+				this.selectedWave = waveId;
 			}
 		},
-		waveEdit(waveID) {
+		waveEdit(waveId) {
 			let newWaveName = window.prompt(this.$t('build.promptWaveName', { count: 24 }));
 			if (typeof newWaveName === 'string') {
 				newWaveName = newWaveName.trim().substr(0, 24);
 				if (newWaveName) {
-					Vue.set(this.waveNames, waveID, newWaveName);
+					Vue.set(this.waveNames, waveId, newWaveName);
 				}
 			}
 		},
-		waveDelete(waveID) {
-			for (let tower of this.placedTowers) {
-				if (tower.waveID === waveID) {
+		waveDelete(waveId) {
+			for (const tower of this.placedTowers) {
+				if (tower.wave_id === waveId) {
 					if (!window.confirm(this.$t('build.wantWaveDelete'))) {
 						return;
 					}
@@ -811,17 +799,17 @@ export default {
 				}
 			}
 
-			this.waveNames.splice(waveID, 1);
-			for (let tower of this.placedTowers) {
-				if (tower.waveID === waveID) {
+			this.waveNames.splice(waveId, 1);
+			for (const tower of this.placedTowers) {
+				if (tower.wave_id === waveId) {
 					this.placedTowers.splice(this.placedTowers.indexOf(tower), 1);
 				}
-				else if (tower.waveID >= waveID) {
-					tower.waveID--;
+				else if (tower.wave_id >= waveId) {
+					tower.wave_id--;
 				}
 			}
 
-			if (this.selectedWave === waveID) {
+			if (this.selectedWave === waveId) {
 				this.selectedWave--;
 			}
 		},
@@ -837,10 +825,8 @@ export default {
 			showAjaxLoader();
 
 			axios
-				.post('/builds/' + this.build.ID + '/watch')
-				.then(({ data }) => {
-					this.build.watchStatus = data.watchStatus;
-				})
+				.post(`/builds/${this.build.id}/watch/`)
+				.then(({ data }) => this.build.watch_status = data.watch_status)
 				.finally(hideAjaxLoader);
 		},
 		buildLike() {
@@ -854,16 +840,12 @@ export default {
 			showAjaxLoader();
 
 			axios
-				.delete('/builds/' + this.build.ID)
-				.then(() => {
-					this.$router.push({ name: 'home' });
-				})
-				.catch(() => {
-					this.$notify({
-						type: 'error',
-						text: this.$t('error.default'),
-					});
-				})
+				.delete(`/builds/${this.build.id}/`)
+				.then(() => this.$router.push({ name: 'home' }))
+				.catch(() => this.$notify({
+					type: 'error',
+					text: this.$t('error.default'),
+				}))
 				.finally(hideAjaxLoader);
 		},
 		save() {
@@ -877,32 +859,26 @@ export default {
 				...this.build,
 				waves: this.waveNames,
 			};
-			build.towers = this.placedTowers.map((placedTower) => {
-				let tower = { ...placedTower };
-
-				delete tower.mouseOver;
-
-				return tower;
-			});
-			build.mapID = this.map.ID;
+			build.towers = this.placedTowers;
+			build.map_id = this.map.id;
 
 			// send xhr
 			let request;
-			if (this.build.ID) {
-				request = axios.patch('/builds/' + this.build.ID, build);
+			if (this.build.id) {
+				request = axios.patch(`/builds/${this.build.id}/`, build);
 			}
 			else {
-				request = axios.post('/builds', build);
+				request = axios.post('/builds/', build);
 			}
 
 			request
 				.then(({ data }) => {
 					// redirect to build from add page
-					if (!this.build.ID) {
+					if (!this.build.id) {
 						this.$router.push({
 							name: 'build',
 							params: {
-								id: data.ID,
+								id: data.id,
 								title: formatSEOTitle(data.title),
 							},
 						});

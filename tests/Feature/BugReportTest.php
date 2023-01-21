@@ -39,7 +39,7 @@ class BugReportTest extends TestCase
 		$this->loginAsTester();
 
 		// delete old issues to prevent the spam protection
-		BugReport::query()->where('steamID', $this->getTestUser()->ID)->delete();
+		BugReport::query()->where('user_id', $this->getTestUser()->id)->delete();
 
 		// create issue
 		$response = $this->createBugReport($title, $description);
@@ -47,13 +47,13 @@ class BugReportTest extends TestCase
 
 		// fetch the issue from response
 		$jsonResponse = json_decode($response->getContent(), true);
-		$this->assertArrayHasKey('ID', $jsonResponse);
+		$this->assertArrayHasKey('id', $jsonResponse);
 		/** @var BugReport $report */
-		$report = BugReport::query()->find($jsonResponse['ID']);
+		$report = BugReport::query()->find($jsonResponse['id']);
 		$this->assertNotNull($report);
 
 		// check issue values
-		$this->assertEquals($this->getTestUser()->ID, $report->steamID);
+		$this->assertEquals($this->getTestUser()->id, $report->user_id);
 		$this->assertEquals($title, $report->title);
 		$this->assertEquals($description, $report->description);
 		$this->assertEquals(BugReport::STATUS_OPEN, $report->status);
@@ -75,7 +75,7 @@ class BugReportTest extends TestCase
 		$response->assertOk();
 
 		$jsonResponse = json_decode($response->getContent(), true);
-		$this->assertArrayHasKey('needWait', $jsonResponse);
+		$this->assertArrayHasKey('need_wait', $jsonResponse);
 
 		return $report;
 	}
@@ -85,7 +85,7 @@ class BugReportTest extends TestCase
 	 */
 	public function testBugReportViewForbidden(BugReport $report) : BugReport
 	{
-		$response = $this->get('/api/bug-reports/'.$report->reportID);
+		$response = $this->get('/api/bug-reports/'.$report->getKey());
 		$response->assertForbidden();
 
 		return $report;
@@ -97,11 +97,11 @@ class BugReportTest extends TestCase
 	public function testBugReportViewForbiddenOthers(BugReport $report) : BugReport
 	{
 		$report->update([
-			'steamID' => $this->getSubTestUser()->ID,
+			'user_id' => $this->getSubTestUser()->getKey(),
 		]);
 
 		$this->loginAsTester();
-		$response = $this->get('/api/bug-reports/'.$report->reportID);
+		$response = $this->get('/api/bug-reports/'.$report->getKey());
 		$response->assertForbidden();
 
 		return $report;
@@ -113,11 +113,11 @@ class BugReportTest extends TestCase
 	public function testBugReportView(BugReport $report)
 	{
 		$report->update([
-			'steamID' => $this->getTestUser()->ID,
+			'user_id' => $this->getTestUser()->getKey(),
 		]);
 
 		$this->loginAsTester();
-		$response = $this->get('/api/bug-reports/'.$report->reportID);
+		$response = $this->get('/api/bug-reports/'.$report->getKey());
 		$response->assertOk();
 	}
 

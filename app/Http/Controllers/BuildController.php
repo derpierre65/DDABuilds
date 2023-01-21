@@ -7,8 +7,11 @@ use App\Http\Requests\BuildRequest;
 use App\Http\Resources\BuildResource;
 use App\Models\Build;
 use App\Models\Build\BuildWave;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BuildController extends Controller
@@ -20,41 +23,88 @@ class BuildController extends Controller
 
 	public function index(Request $request)
 	{
-		$builds = Build::query()
-			->with(['map', 'gameMode', 'difficulty', 'likeValue']);
+		$query = Build::query()->with(['map', 'gameMode', 'difficulty', 'likeValue']);
+		$query->sort($request->query('sort-field'), $request->query('sort-order'));
 
-		$builds->sort($request->query('sortField'), $request->query('sortOrder'));
-
-		if ( auth()->id() ) {
+		if ( $user = auth()->user() ) {
 			if ( $request->query->getBoolean('mine') ) {
-				$builds->where('steamID', auth()->id());
+				$query->where('user_id', $user->getKey());
 			}
 			elseif ( $request->query->getBoolean('watch') ) {
-				$builds->whereHas('watchStatus');
+				$query->whereHas('watchStatus');
 			}
 			elseif ( $request->query->getBoolean('liked') ) {
-				$builds->whereHas('likeValue');
+				$query->whereHas('likeValue');
 			}
 		}
 
-		return BuildResource::collection($builds->search([
-			'isDeleted' => 0,
-			'title' => $request->query('title'),
-			'author' => $request->query('author'),
-			'map' => $request->query('map'),
-			'difficulty' => $request->query('difficulty'),
-			'gameMode' => $request->query('gameMode'),
-			'hardcore' => $request->query('hardcore'),
-			'rifted' => $request->query('rifted'),
-			'afkAble' => $request->query('afkAble'),
-		])->paginate());
+		$searchParameters = $request->query->all();
+		$searchParameters = [
+			'title' => $searchParameters['title'] ?? null,
+			'author' => $searchParameters['author'] ?? null,
+			'map' => $searchParameters['map'] ?? null,
+			'difficulty' => $searchParameters['difficulty'] ?? null,
+			'gameMode' => $searchParameters['game-mode'] ?? null,
+			'is_hardcore' => $searchParameters['is-hardcore'] ?? null,
+			'is_rifted' => $searchParameters['is-rifted'] ?? null,
+			'is_afk_able' => $searchParameters['is-afk-able'] ?? null,
+		];
+
+		$where = [
+			'is_deleted' => false,
+		];
+
+		if ( $searchParameters['title'] ) {
+			$where[] = ['title', 'like', '%'.$searchParameters['title'].'%'];
+		}
+		if ( $searchParameters['author'] ) {
+			$where[] = ['author', 'like', '%'.$searchParameters['author'].'%'];
+		}
+
+		foreach ( ['map', 'gameMode', 'difficulty'] as $relation ) {
+			if ( $value = $searchParameters[$relation] ) {
+				$query->whereHas($relation, fn(Builder $query) => $query->whereIn('name', explode(',', $value)));
+			}
+		}
+
+		// boolean columns
+		foreach ( ['is_hardcore', 'is_afk_able', 'is_rifted'] as $field ) {
+			if ( isset($searchParameters[$field]) && ($searchParameters[$field] === 'true' || (int) $searchParameters[$field]) ) {
+				$where[$field] = true;
+			}
+		}
+
+		$query
+			->where($where)
+			->where(function ($query) use ($user) {
+				$query->where([
+					'build_status' => Build::STATUS_PUBLIC,
+				]);
+
+				if ( $user ) {
+					$query->orWhere([
+						'user_id' => $user->getKey(),
+					]);
+				}
+			});
+
+		return BuildResource::collection($query->paginate());
 	}
 
 	public function show(Request $request, Build $build)
 	{
 		BuildViewEvent::dispatch($build, $request->session());
 
-		$build->loadMissing(['map:ID,name', 'difficulty:ID,name', 'gameMode:ID,name', 'waves.towers', 'heroStats', 'likeValue', 'watchStatus']);
+		$build->loadMissing([
+			'map:id,name',
+			'difficulty:id,name',
+			'gameMode:id,name',
+			'waves',
+			'waves.towers',
+			'heroStats',
+			'likeValue',
+			'watchStatus',
+		]);
 
 		return new BuildResource($build);
 	}
@@ -62,21 +112,20 @@ class BuildController extends Controller
 	public function store(BuildRequest $request)
 	{
 		$data = $request->validated();
+
 		/** @var Build $build */
 		$build = Build::query()->create(array_merge([
-			'date' => time(),
-			'steamID' => auth()->id(),
+			'user_id' => auth()->id(),
 		], $data));
 
-		foreach ( $data['heroStats'] as $key => $heroStats ) {
-			$heroStats['heroID'] = $key;
-			$build->addStats($heroStats);
+		if ( !empty($data['hero_stats']) ) {
+			$build->syncStats($data['hero_stats']);
 		}
 
 		$waves = $waveTowers = [];
 		foreach ( $data['towers'] as $tower ) {
-			$waveTowers[$tower['waveID']] = $waveTowers[$tower['waveID']] ?? [];
-			$waveTowers[$tower['waveID']][] = $tower;
+			$waveTowers[$tower['wave_id']] = $waveTowers[$tower['wave_id']] ?? [];
+			$waveTowers[$tower['wave_id']][] = $tower;
 		}
 
 		foreach ( $data['waves'] as $key => $name ) {
@@ -92,39 +141,35 @@ class BuildController extends Controller
 		}
 
 		foreach ( $data['towers'] as $key => $tower ) {
-			if ( !isset($waves[$tower['waveID']]) ) {
+			if ( !isset($waves[$tower['wave_id']]) ) {
 				continue;
 			}
 
-			$waves[$tower['waveID']]->towers()->create(array_merge($tower, [
-				'towerID' => $tower['ID'],
-				'overrideUnits' => $tower['size'],
-			]));
+			$waves[$tower['wave_id']]->towers()->attach($tower['id'], Arr::except($tower, ['id', 'wave_id']));
 		}
 
-		$build->generateThumbnail();
+		Log::debug('test', [
+			$build->generateThumbnail(),
+		]);
 
 		return response()->json($build);
 	}
 
 	public function update(BuildRequest $request, Build $build)
 	{
-		$data = $request->all();
+		$data = $request->validated();
 
-		$build->heroStats()->delete();
-
-		$build->waves()->each(function (BuildWave $wave) {
-			$wave->towers()->delete();
+		$build->waves->each(function(BuildWave $wave) {
+			$wave->towers()->sync([]);
 		});
 
-		foreach ( $data['heroStats'] as $key => $heroStats ) {
-			$heroStats['heroID'] = $key;
-			$build->addStats($heroStats);
+		if ( !empty($data['hero_stats']) ) {
+			$build->syncStats($data['hero_stats']);
 		}
 
 		$waves = $waveTowers = [];
 		foreach ( $data['towers'] as $tower ) {
-			$waveTowers[$tower['waveID']][] = $tower;
+			$waveTowers[$tower['wave_id']][] = $tower;
 		}
 
 		foreach ( $data['waves'] as $key => $name ) {
@@ -150,25 +195,19 @@ class BuildController extends Controller
 			});
 		}
 
-		$i = 0;
-		foreach ( array_slice($waves, 0, $existsCount, true) as $key => $name ) {
+		foreach ( array_slice($waves, 0, $existsCount, true) as $index => $name ) {
 			/** @var BuildWave $wave */
-			$wave = $build->waves()->get()->get($i);
-			$wave->update(['name' => $name,]);
-
-			$waves[$key] = $wave;
-			$i++;
+			$wave = $build->waves->get($index);
+			$wave->update(['name' => $name]);
+			$waves[$index] = $wave;
 		}
 
 		foreach ( $data['towers'] as $key => $tower ) {
-			if ( !isset($waves[$tower['waveID']]) ) {
+			if ( !isset($waves[$tower['wave_id']]) ) {
 				continue;
 			}
 
-			$waves[$tower['waveID']]->towers()->create(array_merge($tower, [
-				'towerID' => $tower['ID'],
-				'overrideUnits' => $tower['size'],
-			]));
+			$waves[$tower['wave_id']]->towers()->attach($tower['id'], Arr::except($tower, ['id', 'wave_id']));
 		}
 
 		$build->update($data);
@@ -179,7 +218,7 @@ class BuildController extends Controller
 
 	public function destroy(Request $request, Build $build)
 	{
-		if ( $build->update(['isDeleted' => 1]) ) {
+		if ( $build->update(['is_deleted' => 1]) ) {
 			return response()->noContent();
 		}
 
@@ -190,23 +229,17 @@ class BuildController extends Controller
 	{
 		$this->authorize('watch', $build);
 
-		if ( $build->watchStatus ) {
-			Build\BuildWatch::query()->where([
-				'buildID' => $build->getKey(),
-				'steamID' => auth()->id(),
-			])->delete();
+		if ( $build->watchStatus()->first() ) {
+			$build->watchStatus()->detach(auth()->user()->getKey());
 			$watchStatus = 0;
 		}
 		else {
-			$build->watchStatus()->create([
-				'buildID' => $build->getKey(),
-				'steamID' => auth()->id(),
-			]);
+			$build->watchStatus()->attach(auth()->user()->getKey());
 			$watchStatus = 1;
 		}
 
-		return [
-			'watchStatus' => $watchStatus,
-		];
+		return response()->json([
+			'watch_status' => $watchStatus,
+		]);
 	}
 }

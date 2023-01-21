@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\SteamUser;
+use App\Models\User;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Builder;
 use Laravel\Dusk\Browser;
@@ -28,16 +28,16 @@ trait CreatesApplication {
 	}
 
 	/**
-	 * @return SteamUser|Builder
+	 * @return User|Builder
 	 */
 	public function getTestUser() {
-		/** @var SteamUser $testUser */
+		/** @var User $testUser */
 		static $testUser;
 
 		if ( $testUser === null ) {
-			$testUser = SteamUser::query()->firstOrCreate(['ID' => 1337,], [
+			$testUser = User::query()->firstOrCreate(['id' => '1337'], [
 				'name' => 'DuskTest',
-				'avatarHash' => 'ab788fdd0d6636f946729c3fa1456ec2858db472',
+				'avatar_hash' => 'ab788fdd0d6636f946729c3fa1456ec2858db472',
 			]);
 		}
 
@@ -45,13 +45,13 @@ trait CreatesApplication {
 	}
 
 	public function getSubTestUser() {
-		/** @var SteamUser $testUser */
+		/** @var User $testUser */
 		static $testUser;
 
 		if ( $testUser === null ) {
-			$testUser = SteamUser::query()->firstOrCreate(['ID' => 1336], [
+			$testUser = User::query()->firstOrCreate(['id' => '1336'], [
 				'name' => 'DuskSecondTest',
-				'avatarHash' => 'ab788fdd0d6636f946729c3fa1456ec2858db472',
+				'avatar_hash' => 'ab788fdd0d6636f946729c3fa1456ec2858db472',
 			]);
 		}
 
@@ -72,7 +72,7 @@ trait CreatesApplication {
 		$self = $this;
 		Browser::macro('loginAsTester', function () use ($self) {
 			/** @var Browser $this */
-			$this->loginAs($self->getTestUser()->ID);
+			$this->loginAs($self->getTestUser()->id);
 		});
 	}
 }

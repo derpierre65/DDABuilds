@@ -3,36 +3,46 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $ID
- * @property int $unitType (0 = du, 1 = mu)
- * @property int $unitCost
- * @property int $maxUnitCost
- * @property int $manaCost
- * @property int $heroClassID
+ * @property-read int $id
+ * @property int $unit_type (0 = du, 1 = mu)
+ * @property int $unit_cost
+ * @property int $max_unit_cost
+ * @property int $mana
+ * @property int $hero_id
  * @property string $name
- * @property int $isResizable
- * @property int $isRotatable
+ * @property string $image_size
+ * @property int $is_resizable
+ * @property int $is_rotatable
  *
- * @property Hero $hero
+ * @property-read string $public_path
+ * @property-read Hero $hero
  */
 class Tower extends Model
 {
-	protected $primaryKey = 'ID';
-
 	public $timestamps = false;
 
 	protected $guarded = [];
 
-	public function hero(): HasOne
+	protected $casts = [
+		'is_resizable' => 'bool',
+		'is_rotatable' => 'bool',
+	];
+
+	public function hero() : BelongsTo
 	{
-		return $this->hasOne(Hero::class, 'ID', 'heroClassID');
+		return $this->belongsTo(Hero::class);
 	}
 
-	public function getPublicPath(): string
+	public function getPublicPathAttribute() : string
 	{
-		return public_path('assets/images/tower/' . $this->name . '.png');
+		$name = $this->name;
+		if ( $this->is_resizable && $this->pivot) {
+			$name .= '_'.(($this->pivot->size ? : $this->unit_cost) - $this->unit_cost);
+		}
+
+		return public_path('assets/images/tower/'.$name.'.png');
 	}
 }

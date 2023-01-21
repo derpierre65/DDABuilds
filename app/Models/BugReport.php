@@ -2,23 +2,29 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasSteamUser;
+use App\Models\Traits\HasUserRelation;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read int $reportID
- * @property-read int $time
- * @property-read string $title
- * @property-read string $steamID
- * @property-read string $description
- * @property-read int $status
- * @property-read SteamUser $user
+ * @property-read int $id
+ * @property int $time
+ * @property string $title
+ * @property string $user_id
+ * @property string $description
+ * @property int $status
+ *
+ * @property-read Carbon $created_at
+ * @property-read Carbon $updated_at
+ *
+ * @property-read Collection<BugReportComment> $comments
  */
 class BugReport extends Model
 {
-	use HasSteamUser, HasFactory;
+	use HasUserRelation, HasFactory;
 
 	public const STATUS_OPEN = 1;
 
@@ -26,26 +32,10 @@ class BugReport extends Model
 
 	public const WAIT_TIME = 60;
 
-	protected $perPage = 20;
-
-	public $timestamps = false;
-
-	protected $primaryKey = 'reportID';
-
-	protected $fillable = [
-		'steamID',
-		'time',
-		'title',
-		'description',
-		'status',
-	];
-
-	protected $hidden = [
-		'steamID',
-	];
+	protected $guarded = [];
 
 	public function comments() : HasMany
 	{
-		return $this->hasMany(BugReportComment::class, 'bugReportID', 'reportID');
+		return $this->hasMany(BugReportComment::class);
 	}
 }

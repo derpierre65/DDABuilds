@@ -5,6 +5,7 @@ namespace Tests\Feature\Build;
 use App\Models\Build;
 use App\Models\Hero;
 use App\Models\Tower;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class BuildCreateTest extends TestCase
@@ -30,51 +31,51 @@ class BuildCreateTest extends TestCase
 	public function buildCreate(array $overrideData = []) : Build
 	{
 		/** @var Tower $tower */
-		$tower = Tower::query()->where('isResizable', true)->inRandomOrder()->first();
+		$tower = Tower::query()->where(['is_resizable' => true])->inRandomOrder()->first();
+		$heroes = Hero::query()->where(['is_hero' => true, 'is_disabled' => false])->inRandomOrder()->limit(3)->get();
 
-		$heros = Hero::query()->where([['isHero', 1], ['isDisabled', 0]])->inRandomOrder()->limit(3)->get();
-
-		$data = array_merge([
+		$body = array_merge([
 			'title' => $this->faker->sentence(),
 			'description' => '',
 			'author' => $this->getTestUser()->name,
-			'timePerRun' => '123',
-			'expPerRun' => '456',
-			'afkAble' => 1,
-			'hardcore' => 1,
-			'rifted' => 1,
-			'gameModeID' => 2,
-			'difficultyID' => 2,
-			'buildStatus' => Build::STATUS_PUBLIC,
-			'mapID' => 1,
-			'towers' => [
-				[
-					'ID' => 2,
-					'rotation' => 90,
-					'size' => 0,
-					'x' => 500,
-					'y' => 500,
-					'waveID' => 0,
-				],
-				[
-					'ID' => $tower->ID,
-					'rotation' => 90,
-					'size' => $tower->maxUnitCost - 1,
-					'x' => 400,
-					'y' => 400,
-					'waveID' => 1,
-				],
-			],
+			'time_per_run' => '123',
+			'exp_per_run' => '456',
+			'is_afk_able' => $this->faker->boolean,
+			'is_hardcore' => $this->faker->boolean,
+			'is_rifted' => $this->faker->boolean,
+			'game_mode_id' => 2,
+			'difficulty_id' => 2,
+			'build_status' => Build::STATUS_PUBLIC,
+			'map_id' => 1,
+			'hero_stats' => [],
 			'waves' => [
 				'first_wave',
 				'second_wave',
 			],
-			'heroStats' => [],
+			'towers' => [
+				[
+					'id' => $tower->getKey(),
+					'wave_id' => 0,
+					'x' => 500,
+					'y' => 500,
+					'rotation' => 90,
+					'size' => 0,
+				],
+				[
+					'id' => $tower->getKey(),
+					'wave_id' => 1,
+					'x' => 400,
+					'y' => 400,
+					'rotation' => 90,
+					'size' => $tower->max_unit_cost - 1,
+				],
+			],
 		], $overrideData);
 
 		/** @var Hero $hero */
-		foreach ( $heros as $hero ) {
-			$data['heroStats'][$hero->ID] = [
+		foreach ( $heroes as $hero ) {
+			$body['hero_stats'][] = [
+				'id' => $hero->getKey(),
 				'hp' => 1,
 				'rate' => 2,
 				'damage' => 3,
@@ -82,61 +83,52 @@ class BuildCreateTest extends TestCase
 			];
 		}
 
-		$response = $this->post('/api/builds/', $data);
+		$response = $this->post('/api/builds/', $body);
 		$response->assertOk();
 
 		$responseData = json_decode($response->getContent(), true);
-		$buildID = $responseData['ID'];
+		$id = $responseData['id'];
 
 		/** @var Build $build */
-		$build = Build::query()->with(['gameMode', 'difficulty', 'map', 'waves', 'heroStats', 'likeValue', 'watchStatus',])->find($buildID);
+		$build = Build::query()->with(['gameMode', 'difficulty', 'map', 'waves', 'heroStats', 'likeValue', 'watchStatus'])->find($id);
 
 		// check build data
-		$this->assertSame($this->getTestUser()->ID, $build->steamID);
+		$this->assertSame($this->getTestUser()->getKey(), $build->user_id);
 
-		foreach ( $data as $key => $value ) {
+		foreach ( $body as $key => $value ) {
 			if ( !is_array($value) ) {
 				$this->assertSame($build->{$key}, $value);
 			}
 		}
 
 		// check the waves
-		foreach ( $data['waves'] as $key => $waveName ) {
+		$waves = $build->waves()->with('towers')->get();
+		foreach ( $body['waves'] as $waveIndex => $waveName ) {
 			/** @var Build\BuildWave $buildWave */
-			$buildWave = $build->waves()->get()->all()[$key];
+			$buildWave = $waves[$waveIndex];
 			$this->assertSame($buildWave->name, $waveName);
-			$tower = $buildWave->towers()->first();
-			foreach ( $data['towers'][$key] as $towerKey => $value ) {
-				if ( !in_array($towerKey, ['x', 'y', 'rotation', 'size', 'ID']) ) {
-					continue;
-				}
-
-				if ( $towerKey === 'ID' ) {
-					$towerKey = 'towerID';
-				}
-				elseif ( $towerKey === 'size' ) {
-					$towerKey = 'overrideUnits';
-				}
-
-				$this->assertSame($tower->{$towerKey}, $value);
+			$tower = $waves[$waveIndex]->towers->first();
+			foreach ( Arr::except($body['towers'][$waveIndex], ['id', 'wave_id']) as $towerIndex => $bodyTower ) {
+				$this->assertSame($tower->pivot->{$towerIndex}, $bodyTower);
 			}
 		}
 
-		$this->assertSame($build->heroStats()->count(), count($data['heroStats']), 'more hero stats available then given');
+		$this->assertSame($build->heroStats()->count(), count($body['hero_stats']), 'more hero stats available than given');
 
-		/** @var Build\BuildHeroStats $heroStats */
-		foreach ( $build->heroStats()->get() as $heroStats ) {
-			$this->assertSame($data['heroStats'][$heroStats->heroID], [
-				'hp' => $heroStats->hp,
-				'rate' => $heroStats->rate,
-				'damage' => $heroStats->damage,
-				'range' => $heroStats->range,
+		/** @var Hero $hero */
+		$heroStatsById = array_column($body['hero_stats'], null, 'id');
+		foreach ( $build->heroStats()->get() as $key => $hero ) {
+			$this->assertSame(Arr::except($heroStatsById[$hero->getKey()], ['id']), [
+				'hp' => $hero->pivot->hp,
+				'rate' => $hero->pivot->rate,
+				'damage' => $hero->pivot->damage,
+				'range' => $hero->pivot->range,
 			]);
 		}
 
 		// check if thumbnail was generated
 		// TODO fix github pipeline, imagescale fails
-		// $this->assertFileExists($build->getPublicThumbnailPath(), 'build thumbnail was not generated');
+		$this->assertFileExists($build->getPublicThumbnailPathAttribute(), 'build thumbnail was not generated');
 
 		return $build;
 	}
@@ -149,27 +141,27 @@ class BuildCreateTest extends TestCase
 
 		// create a private build
 		return $this->buildCreate([
-			'afkAble' => 0,
-			'hardcore' => 0,
-			'rifted' => 0,
-			'buildStatus' => Build::STATUS_PRIVATE,
+			'is_afk_able' => false,
+			'is_hardcore' => false,
+			'is_rifted' => false,
+			'build_status' => Build::STATUS_PRIVATE,
 		]);
 	}
 
 	/** @depends testCreate */
 	public function testPermissions(Build $build) : Build
 	{
-		$response = $this->getJson('/api/builds/'.$build->ID);
+		$response = $this->getJson('/api/builds/'.$build->id);
 		$response->assertForbidden();
 
 		// login as sub tester, another users should not have access on private builds
 		$this->loginAsSubTester();
-		$response = $this->getJson('/api/builds/'.$build->ID);
+		$response = $this->getJson('/api/builds/'.$build->id);
 		$response->assertForbidden();
 
 		// login as creator, creator should have access
 		$this->loginAsTester();
-		$response = $this->getJson('/api/builds/'.$build->ID);
+		$response = $this->getJson('/api/builds/'.$build->id);
 		$response->assertOk();
 
 		return $build;
@@ -179,19 +171,19 @@ class BuildCreateTest extends TestCase
 	public function testDelete(Build $build)
 	{
 		// test permission
-		$response = $this->deleteJson('/api/builds/'.$build->ID);
+		$response = $this->deleteJson('/api/builds/'.$build->id);
 		$response->assertForbidden();
 
 		// test as non creator
 		$this->loginAsSubTester();
-		$response = $this->deleteJson('/api/builds/'.$build->ID);
+		$response = $this->deleteJson('/api/builds/'.$build->id);
 		$response->assertForbidden();
 
 		$this->loginAsTester();
-		$response = $this->deleteJson('/api/builds/'.$build->ID);
+		$response = $this->deleteJson('/api/builds/'.$build->id);
 		$response->assertNoContent();
 
 		// check if it deleted
-		$this->assertSame(1, Build::query()->find($build->ID)->isDeleted);
+		$this->assertSame(1, Build::query()->find($build->id)->is_deleted);
 	}
 }

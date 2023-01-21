@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read int $mapID
- * @property-read int $difficultyID
- * @property-read int $units
+ * @property-read int $map_id
+ * @property-read int $difficulty_id
+ * @property int $units
  */
-class MapAvailableUnit extends Model {
+class MapAvailableUnit extends Model
+{
 	public $incrementing = false;
 
 	public $timestamps = false;

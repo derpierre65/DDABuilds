@@ -22,12 +22,12 @@ trait TowerMigration
 		Tower::query()->updateOrCreate([
 			'name' => $towerName,
 		], [
-			'heroClassID' => $hero->getKey(),
-			'isResizable' => $isResizable,
-			'isRotatable' => $isRotatable,
+			'hero_id' => $hero->getKey(),
+			'is_resizable' => $isResizable,
+			'is_Rotatable' => $isRotatable,
 			'manaCost' => $manaCost,
-			'maxUnitCost' => $maxUnitCost,
-			'unitCost' => $unitCost,
+			'max_unit_cost' => $maxUnitCost,
+			'unit_cost' => $unitCost,
 			'unitType' => $unitType,
 		]);
 	}

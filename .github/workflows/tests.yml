@@ -30,11 +30,13 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
       - name: Cache - NPM dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -46,19 +48,10 @@ jobs:
             ${{ runner.os }}-
 
       - name: Cache - Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
-      - name: NPM - Install Dependencies
-        run: npm install
-
-      - name: NPM - Build
-        run: npm run build
-
-      - name: Run ESLint
-        run: npm run eslint
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -71,13 +64,27 @@ jobs:
         env:
           APP_ENV: testing
 
-      - name: Prepare Laravel Application
+      - name: Laravel - Prepare
         run: |
           cp .env.example .env
           php artisan key:generate
-          php artisan dusk:chrome-driver --detect
           php artisan migrate:fresh
+
+      - name: NPM - Install Dependencies
+        run: npm install
+
+      - name: NPM - Build
+        run: npm run build
+
+      - name: Run ESLint
+        run: npm run eslint
+
+      - name: Laravel - Start Application
+        run: |
+          php artisan dusk:chrome-driver --detect
           chmod -R 0755 public/
+          mkdir storage/app/public/thumbnails
+          chmod -R 0755 storage/
           chmod -R 0755 vendor/laravel/dusk/bin/
           ./vendor/laravel/dusk/bin/chromedriver-linux > /dev/null 2>&1 &
           php artisan serve > /dev/null 2>&1 &

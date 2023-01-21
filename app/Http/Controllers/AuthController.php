@@ -3,24 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Auth\SteamAuth;
-use App\Models\SteamUser;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class AuthController extends Controller {
-	public SteamAuth $steamAuth;
-
-	public function __construct(SteamAuth $steamAuth) {
-		$this->steamAuth = $steamAuth;
-	}
-
-	public function auth(Request $request) {
+class AuthController extends Controller
+{
+	public function auth(Request $request, SteamAuth $steamAuth)
+	{
 		if ( $request->query('debug') && app()->isLocal() ) {
 			// /api/auth/steam?debug=steamID
-			/** @var SteamUser $user */
-			$user = SteamUser::query()->find($request->query('debug'));
+			/** @var User $user */
+			$user = User::query()->find($request->query('debug'));
 			if ( $user ) {
 				Auth::login($user, true);
 			}
@@ -28,16 +24,16 @@ class AuthController extends Controller {
 			return redirect('/auth/');
 		}
 
-		if ( $this->steamAuth->isValidRequest() ) {
-			$steamID = $this->steamAuth->auth();
-			if ( $steamID ) {
-				$userInfo = $this->steamAuth->getUserInfo();
-				/** @var SteamUser $user */
-				$user = SteamUser::query()->updateOrCreate([
-					'ID' => $steamID,
+		if ( $steamAuth->isValidRequest() ) {
+			$userId = $steamAuth->auth();
+			if ( $userId ) {
+				$userInfo = $steamAuth->getUserInfo();
+				/** @var User $user */
+				$user = User::query()->updateOrCreate([
+					'id' => $userId,
 				], [
 					'name' => $userInfo['personaname'],
-					'avatarHash' => $userInfo['avatarhash'],
+					'avatar_hash' => $userInfo['avatarhash'],
 				]);
 
 				Auth::login($user, true);
@@ -49,7 +45,8 @@ class AuthController extends Controller {
 		throw new BadRequestHttpException();
 	}
 
-	public function logout() : JsonResponse {
+	public function logout() : JsonResponse
+	{
 		Auth::logout();
 
 		return response()->json(['status' => 'OK']);

@@ -9,7 +9,7 @@
 		<template v-if="notifications.length">
 			<div v-for="notification in notifications" :key="notification.id" :class="{marginTop: unreadNotifications}" class="notification alert alert-info">
 				<i18next :options="{context: notification.data.context, notification: notification.data}" :path="'notification.' + notification.type" tag="div">
-					<a :href="'https://steamcommunity.com/profiles/' + notification.data.user.ID" place="user" target="_blank">{{notification.data.user.name}}</a>
+					<a :href="`https://steamcommunity.com/profiles/${notification.data.user.id}`" place="user" target="_blank">{{notification.data.user.name}}</a>
 					<router-link v-if="notification.data.build" :to="{name: 'build', params: buildLinkParams(notification.data.build)}" place="buildLink">
 						{{notification.data.build.title}}<!--
 						fix for space after build title
@@ -64,7 +64,7 @@ export default {
 				.get('/notifications/mark-all-as-read')
 				.then(() => {
 					this.$store.commit('authentication/ADD_UNREAD_NOTIFICATIONS', this.unreadNotifications * -1);
-					for (let notification of this.notifications) {
+					for (const notification of this.notifications) {
 						notification.read = true;
 					}
 				})

@@ -2,25 +2,33 @@
 
 namespace App\Models\Build;
 
+use App\Models\Tower;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class BuildWave extends Model {
-	/** @inheritDoc */
+/**
+ * @property-read int $id
+ * @property string $name
+ * @property-read int $build_id
+ *
+ * @property-read Collection<Tower> $towers
+ */
+class BuildWave extends Model
+{
 	public $timestamps = false;
 
-	/** @inheritDoc */
 	protected $fillable = ['name'];
 
-	/** @inheritDoc */
-	protected $primaryKey = 'waveID';
-
-	/**
-	 * get all towers from this wave
-	 *
-	 * @return HasMany
-	 */
-	public function towers() {
-		return $this->hasMany(BuildTower::class, 'buildWaveID', 'waveID');
+	public function towers() : BelongsToMany
+	{
+		return $this->belongsToMany(Tower::class)
+			->withPivot([
+				'x',
+				'y',
+				'rotation',
+				'size',
+			]);
 	}
 }

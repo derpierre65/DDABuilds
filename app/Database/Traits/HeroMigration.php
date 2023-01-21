@@ -10,8 +10,8 @@ trait HeroMigration
 	{
 		Hero::query()->updateOrCreate(['name' => $name], [
 			'name' => $name,
-			'isHero' => $isHero,
-			'isDisabled' => $isDisabled,
+			'is_hero' => $isHero,
+			'is_disabled' => $isDisabled,
 		]);
 	}
 

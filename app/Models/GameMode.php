@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read int    $ID
+ * @property-read int $id
  * @property-read string $name
  */
-class GameMode extends Model {
-	/** @inheritdoc */
-	protected $primaryKey = 'id';
-
-	/** @inheritdoc */
+class GameMode extends Model
+{
 	public $timestamps = false;
 
-	/** @inheritdoc */
-	protected $fillable = [
-		'name',
-	];
+	protected $guarded = [];
 }

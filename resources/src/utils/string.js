@@ -1,5 +1,5 @@
 function ucfirst(value) {
-	if ( value === null ) {
+	if (value === null) {
 		return '';
 	}
 	else if (Array.isArray(value)) {
@@ -13,7 +13,7 @@ function ucfirst(value) {
 }
 
 function lcfirst(value) {
-	if ( value === null ) {
+	if (value === null) {
 		return '';
 	}
 	else if (Array.isArray(value)) {
@@ -42,9 +42,33 @@ function formatString(name, replace = '_') {
 	return name.replace(/[A-Z]/g, letter => replace + letter);
 }
 
+function hasSymbols(str) {
+	return /[!"#%&'()*+,./:;<=>?@[\\\]^`{|}]/u.exec(str); // without " ", "$", "-" and "_"
+}
+
+function isPascalCase(str) {
+	return !!hasSymbols(str) || /^[a-z]/u.exec(str) || /-|_|\s/u.exec(str); // kebab or snake or space
+}
+
+function camelCase(str) {
+	if (isPascalCase(str)) {
+		return str.charAt(0).toLowerCase() + str.slice(1);
+	}
+	return str.replace(/[-_](\w)/gu, (_, c) => (c ? c.toUpperCase() : ''));
+}
+
+function kebabCase(str) {
+	return str
+		.replace(/_/gu, '-')
+		.replace(/\B([A-Z])/gu, '-$1')
+		.toLowerCase();
+}
+
 export {
 	lcfirst,
 	ucfirst,
 	formatSEOTitle,
 	formatString,
+	kebabCase,
+	camelCase,
 };

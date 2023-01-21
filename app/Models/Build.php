@@ -3,48 +3,55 @@
 namespace App\Models;
 
 use App\Models\Build\BuildComment;
-use App\Models\Build\BuildHeroStats;
-use App\Models\Build\BuildTower;
-use App\Models\Build\BuildWatch;
 use App\Models\Build\BuildWave;
 use App\Models\Like\ILikeableModel;
-use App\Models\Traits\HasSteamUser;
+use App\Models\Traits\HasUserRelation;
 use App\Models\Traits\TLikeable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * @property-read int $ID
- * @property-read string $date
- * @property-read string $author
- * @property-read string $title
- * @property-read string $expPerRun
- * @property-read string $timePerRun
- * @property-read string $description
- * @property-read int $views
- * @property-read int $gameModeID
- * @property-read int $difficultyID
- * @property-read int $mapID
- * @property-read int $comments
- * @property-read int $isDeleted
- * @property-read int $buildStatus
- * @property-read int $afkAble
- * @property-read int $hardcore
- * @property-read int $likes
- * @property-read string $steamID
+ * @property-read int $id
+ * @property string $user_id
+ * @property string $author
+ * @property string $title
+ * @property string $exp_per_run
+ * @property string $time_per_run
+ * @property string $description
+ * @property int $views
+ * @property int $game_mode_id
+ * @property int $difficulty_id
+ * @property int $map_id
+ * @property int $comments
+ * @property int $is_deleted
+ * @property int $build_status
+ * @property int $is_afk_able
+ * @property int $is_hardcore
+ * @property int $is_rifted
+ * @property int $likes
+ * @property-read Carbon $created_at
+ * @property-read Carbon $updated_at
  *
- * @property-read Like $likeValue
  * @property-read GameMode $gameMode
  * @property-read Difficulty $difficulty
  * @property-read Map $map
- * @property-read BuildWatch $watchStatus
+ * @property-read User $watchStatus
+ * @property-read Collection<Hero> $heroStats
+ * @property-read Collection<BuildWave> $waves
  */
 class Build extends Model implements ILikeableModel
 {
 	use HasFactory;
-	use HasSteamUser;
+	use HasUserRelation;
 	use TLikeable;
 
 	/** @var int public build status (everyone can view the build) */
@@ -58,100 +65,93 @@ class Build extends Model implements ILikeableModel
 
 	protected $perPage = 21;
 
-	protected $primaryKey = 'ID';
-
-	public $timestamps = false;
-
 	protected $fillable = [
-		'mapID',
-		'difficultyID',
-		'steamID',
+		'map_id',
+		'difficulty_id',
+		'user_id',
 		'author',
 		'title',
 		'description',
-		'date',
-		'buildStatus',
-		'gameModeID',
-		'hardcore',
-		'afkAble',
-		'rifted',
+		'build_status',
+		'game_mode_id',
+		'is_hardcore',
+		'is_afk_able',
+		'is_rifted',
 		'views',
 		'likes',
 		'comments',
-		'timePerRun',
-		'expPerRun',
-		'isDeleted',
+		'time_per_run',
+		'exp_per_run',
+		'is_deleted',
 	];
 
-	public $validSortFields = [
+	public array $validSortFields = [
 		'author',
 		'likes',
-		'mapID',
+		'map_id',
 		'title',
 		'views',
-		'date',
-		'difficultyID',
-		'gameModeID',
+		'created_at',
+		'difficulty_id',
+		'game_mode_id',
 	];
 
-	public function watchStatus()
+	protected $casts = [
+		'is_hardcore' => 'bool',
+		'is_afk_able' => 'bool',
+		'is_rifted' => 'bool',
+	];
+
+	public function watchStatus() : BelongsToMany
 	{
-		return $this->hasOne(BuildWatch::class, 'buildID', 'ID')->where('steamID', auth()->id() ?? 0);
+		return $this->belongsToMany(User::class)->where('user_id', auth()->user()?->getKey() ?? 0);
 	}
 
-	public function map()
+	public function map() : BelongsTo
 	{
-		return $this->hasOne(Map::class, 'ID', 'mapID');
+		return $this->belongsTo(Map::class);
 	}
 
-	public function difficulty()
+	public function difficulty() : BelongsTo
 	{
-		return $this->hasOne(Difficulty::class, 'ID', 'difficultyID');
+		return $this->belongsTo(Difficulty::class);
 	}
 
-	public function gameMode()
+	public function gameMode() : BelongsTo
 	{
-		return $this->hasOne(GameMode::class, 'ID', 'gameModeID');
+		return $this->belongsTo(GameMode::class);
 	}
 
-	public function waves()
+	public function waves() : HasMany
 	{
-		return $this->hasMany(BuildWave::class, 'buildID', 'ID');
+		return $this->hasMany(BuildWave::class);
 	}
 
-	public function heroStats()
+	public function heroStats() : BelongsToMany
 	{
-		return $this->hasMany(BuildHeroStats::class, 'buildID', 'ID');
+		return $this->belongsToMany(Hero::class)
+			->withPivot([
+				'hp',
+				'damage',
+				'range',
+				'rate',
+			]);
 	}
 
-	public function commentList()
+	public function commentList() : HasMany
 	{
-		return $this->hasMany(BuildComment::class, 'buildID', 'ID')->orderBy('date', 'desc');
+		return $this->hasMany(BuildComment::class);
 	}
 
-	public function addStats($stats)
-	{
-		if ( !$this->ID ) {
-			return false;
-		}
-
-		$stats['buildID'] = $this->ID;
-		if ( $stats['hp'] || $stats['damage'] || $stats['range'] || $stats['rate'] ) {
-			$this->heroStats()->create($stats);
-		}
-
-		return true;
-	}
-
-	public function scopeSort(Builder $query, $column = 'date', $direction = 'asc')
+	public function scopeSort(Builder $query, $column = 'created_at', $direction = 'asc')
 	{
 		if ( $column === null && $direction === null ) {
-			$column = 'date';
+			$column = 'created_at';
 			$direction = 'desc';
 		}
 
 		if ( $column === null ) {
-			$column = 'date';
+			$column = 'created_at';
 		}
 		if ( $direction === null ) {
 			$direction = 'asc';
@@ -162,107 +162,47 @@ class Build extends Model implements ILikeableModel
 		}
 	}
 
-	public function scopeSearch(Builder $query, array $searchParameters) : Builder
-	{
-		$searchParameters = array_merge([
-			'isDeleted' => 0,
-			'title' => null,
-			'author' => null,
-			'map' => null,
-			'difficulty' => null,
-			'gameMode' => null,
-		], $searchParameters);
-
-		$where = [
-			'isDeleted' => 0,
-		];
-
-		if ( $searchParameters['title'] ) {
-			$where[] = ['title', 'like', '%'.$searchParameters['title'].'%'];
-		}
-		if ( $searchParameters['author'] ) {
-			$where[] = ['author', 'like', '%'.$searchParameters['author'].'%'];
-		}
-
-		if ( $searchParameters['map'] ) {
-			$maps = Map::query()->whereIn('name', explode(',', $searchParameters['map']))->get();
-			if ( count($maps) ) {
-				$query->whereIn('mapID', $maps->pluck('ID'));
-			}
-		}
-		if ( $searchParameters['gameMode'] ) {
-			$gameModes = GameMode::query()->whereIn('name', explode(',', $searchParameters['gameMode']))->get();
-			if ( count($gameModes) ) {
-				$query->whereIn('gameModeID', $gameModes->pluck('ID'));
-			}
-		}
-		if ( $searchParameters['difficulty'] ) {
-			$difficulties = Difficulty::query()->whereIn('name', explode(',', $searchParameters['difficulty']))->get();
-			if ( $difficulties !== null ) {
-				$query->whereIn('difficultyID', $difficulties->pluck('ID'));
-			}
-		}
-
-		foreach ( ['hardcore', 'afkAble', 'rifted'] as $field ) {
-			if ( isset($searchParameters[$field]) && $searchParameters[$field] === 'true' ) {
-				$query->where([
-					$field => true,
-				]);
-			}
-		}
-
-		return $query
-			->where($where)
-			->where(function ($query) {
-				$query->where('buildStatus', '=', self::STATUS_PUBLIC);
-
-				if ( auth()->id() ) {
-					$query->orWhere([
-						$this->table.'.steamID' => auth()->id(),
-					]);
-				}
-			});
-	}
-
 	public function generateThumbnail() : bool
 	{
-		$mapResource = imagecreatefrompng($this->map->getPublicPath());
+		$mapResource = imagecreatefrompng($this->map->getPublicPathAttribute());
 		if ( !$mapResource ) {
+			Log::debug('map resource failed');
 			return false;
 		}
 
 		$mapResource = imagescale($mapResource, 1024, 1024, IMG_BICUBIC_FIXED);
 		if ( !$mapResource ) {
+			Log::debug('scale failed', [get_loaded_extensions()]);
 			return false;
 		}
 
-		/** @var BuildTower $tower */
-		foreach ( $this->waves()->first()->towers()->with(['towerInfo', 'towerInfo.hero'])->get() as $tower ) {
+		/** @var Tower $buildTower */
+		foreach ( $this->waves()->first()->towers()->with(['hero'])->get() as $index => $buildTower ) {
 			$towerSizeX = $towerSizeY = 35;
 
-			if ( $tower->towerInfo->hero->name === 'monk' ) {
+			if ( $buildTower->hero->name === 'monk' ) {
 				$towerSizeX = $towerSizeY = 100;
 			}
-			elseif ( $tower->towerInfo->hero->name === 'huntress' ) {
+			elseif ( $buildTower->hero->name === 'huntress' ) {
 				$towerSizeX = $towerSizeY = 45;
 			}
-			elseif ( $tower->towerInfo->hero->name === 'seriesEVA' ) {
+			elseif ( $buildTower->hero->name === 'seriesEVA' ) {
 				$towerSizeX = $towerSizeY = 0;
 			}
 
-			$towerResource = imagecreatefrompng($tower->getPublicPath());
+			$towerResource = imagecreatefrompng($buildTower->getPublicPathAttribute());
 			if ( $towerSizeX && $towerSizeY ) {
 				$towerResource = imagescale($towerResource, $towerSizeX, $towerSizeY, IMG_BICUBIC_FIXED);
 			}
 			else {
-				$imageInfo = getimagesize($tower->getPublicPath());
+				$imageInfo = getimagesize($buildTower->getPublicPathAttribute());
 				$towerSizeX = $imageInfo[0];
 				$towerSizeY = $imageInfo[1];
 			}
 
-			$rotation = -$tower->rotation;
-			$x = $tower->x;
-			$y = $tower->y;
+			$rotation = -$buildTower->pivot->rotation;
+			$x = $buildTower->pivot->x;
+			$y = $buildTower->pivot->y;
 			if ( $rotation ) {
 				$png = imagecreatetruecolor($towerSizeX, $towerSizeY);
 				imagesavealpha($png, true);
@@ -281,20 +221,32 @@ class Build extends Model implements ILikeableModel
 
 		return imagepng(
 			imagescale($mapResource, 200, 200, IMG_BICUBIC_FIXED),
-			$this->getPublicThumbnailPath()
+			$this->getPublicThumbnailPathAttribute()
 		);
 	}
 
-	public function getPublicThumbnailPath() : string
+	public function getPublicThumbnailPathAttribute() : string
 	{
-		return Storage::disk('public')->path('thumbnails/'.$this->ID.'.png');
+		return Storage::disk('public')->path('thumbnails/'.$this->getKey().'.png');
 	}
 
 	public function getNotificationData() : array
 	{
 		return [
-			'ID' => $this->ID,
+			'id' => $this->getKey(),
 			'title' => $this->title,
 		];
+	}
+
+	public function syncStats(array $heroStats)
+	{
+		$values = [];
+		foreach ( $heroStats as $key => $attributes ) {
+			if ( $attributes['hp'] || $attributes['damage'] || $attributes['rate'] || $attributes['range'] ) {
+				$values[$attributes['id']] = Arr::except($attributes, ['id']);
+			}
+		}
+
+		$this->heroStats()->sync($values);
 	}
 }

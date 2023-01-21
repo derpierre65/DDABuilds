@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\NotificationResource;
 use App\Models\Build\BuildComment;
 use App\Models\DatabaseNotification;
-use App\Models\SteamUser;
+use App\Models\User;
 use App\Notifications\BuildCommentNotification;
 
 class NotificationController extends Controller {
@@ -27,7 +27,7 @@ class NotificationController extends Controller {
 
 	public function markAsRead(string $notificationID) {
 		/**
-		 * @var SteamUser $user
+		 * @var User $user
 		 * @var DatabaseNotification $notification
 		 */
 		$user = auth()->user();
@@ -38,7 +38,7 @@ class NotificationController extends Controller {
 	}
 
 	public function markAllAsRead() {
-		/** @var SteamUser $user */
+		/** @var User $user */
 		$user = auth()->user();
 		$user->unreadNotifications()->update(['read_at' => now()]);
 

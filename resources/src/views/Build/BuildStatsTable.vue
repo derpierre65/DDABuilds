@@ -9,26 +9,14 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="hero in heroStatsList" :key="hero.heroID">
+			<tr v-for="hero in heroStatsList" :key="hero.id">
 				<td>
-					<img v-b-tooltip="$t('hero.' + hero.name)" :alt="$t('hero.' + hero.name)" :src="'/assets/images/hero/' + hero.name + '.png'"
+					<img v-b-tooltip="$t('hero.' + heroList[hero.id])" :alt="$t('hero.' + heroList[hero.id])" :src="'/assets/images/hero/' + heroList[hero.id] + '.png'"
 						class="heroAttribute">
 				</td>
-				<td>
-					<input v-if="editMode" v-model.number="heroStats[hero.heroID].hp" class="form-control" min="0" size="5" type="text">
-					<div v-else class="text-right">{{heroStats[hero.heroID].hp}}</div>
-				</td>
-				<td>
-					<input v-if="editMode" v-model.number="heroStats[hero.heroID].damage" class="form-control" min="0" size="5" type="text">
-					<div v-else class="text-right">{{heroStats[hero.heroID].damage}}</div>
-				</td>
-				<td>
-					<input v-if="editMode" v-model.number="heroStats[hero.heroID].range" class="form-control" min="0" size="5" type="text">
-					<div v-else class="text-right">{{heroStats[hero.heroID].range}}</div>
-				</td>
-				<td>
-					<input v-if="editMode" v-model.number="heroStats[hero.heroID].rate" class="form-control" min="0" size="5" type="text">
-					<div v-else class="text-right">{{heroStats[hero.heroID].rate}}</div>
+				<td v-for="attribute in ['hp', 'damage', 'range', 'rate']" :key="attribute">
+					<input v-if="editMode" v-model.number="hero[attribute]" class="form-control" min="0" size="5" type="text">
+					<div v-else class="text-right">{{hero[attribute]}}</div>
 				</td>
 			</tr>
 		</tbody>
@@ -41,9 +29,9 @@ export default {
 	props: {
 		editMode: Boolean,
 		value: {
-			type: Object,
+			type: Array,
 			default() {
-				return {};
+				return [];
 			},
 		},
 		heroList: {
@@ -60,26 +48,19 @@ export default {
 	},
 	computed: {
 		heroStatsList() {
-			let heroStats = [];
-			for (let key in this.heroStats) {
-				if (Object.prototype.hasOwnProperty.call(this.heroStats, key)) {
-					let show = this.editMode;
-					if (!show) {
-						for (let key2 of ['hp', 'range', 'damage', 'rate']) {
-							if (this.heroStats[key][key2] > 0) {
-								show = true;
-								break;
-							}
-						}
-					}
-
-					if (show) {
-						heroStats.push(Object.assign({}, { ...this.heroStats[key] }, { name: this.heroList[key], heroID: key }));
-					}
-				}
+			if (this.editMode) {
+				return this.heroStats;
 			}
 
-			return heroStats;
+			return this.heroStats.filter((heroStat) => {
+				for (const attribute of ['hp', 'range', 'damage', 'rate']) {
+					if (heroStat[attribute] > 0) {
+						return true;
+					}
+				}
+
+				return false;
+			});
 		},
 	},
 	watch: {

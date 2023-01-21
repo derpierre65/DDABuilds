@@ -5,15 +5,17 @@ namespace App\Http\Resources;
 use App\Models\Hero;
 
 /**
- * @mixin Hero
+ * @property-read Hero $resource
  */
-class HeroResource extends JsonResource {
-	public function toArray($request) {
+class HeroResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'ID' => $this->ID,
-			'name' => $this->name,
-			'isHero' => $this->isHero,
-			'towers' => $this->whenLoaded('towers'),
+			'id' => $this->resource->getKey(),
+			'name' => $this->resource->name,
+			'is_hero' => $this->resource->is_hero,
+			'towers' => TowerResource::collection($this->whenLoaded('towers')),
 		];
 	}
 }

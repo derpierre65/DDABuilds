@@ -13,7 +13,7 @@ class BugReportTest extends DuskTestCase {
 	protected static $title = '';
 
 	public function testCreate() {
-		BugReport::query()->where(['steamID' => 1337])->delete();
+		BugReport::query()->where(['user_id' => 1337])->delete();
 
 		$this->browse(function (Browser $I) {
 			$I->loginAsTester();

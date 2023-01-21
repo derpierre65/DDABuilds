@@ -11,9 +11,9 @@ function like(objectType, object, likeType = LIKE) {
 
 	return axios
 		.post('/like/', {
-			objectID: object.ID,
-			objectType,
-			likeType: likeType === LIKE ? 'like' : 'dislike',
+			object_id: object.id,
+			object_type: objectType,
+			like_type: likeType === LIKE ? 'like' : 'dislike',
 		})
 		.then(({ data }) => {
 			let newLikeValue = 0;

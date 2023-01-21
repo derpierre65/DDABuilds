@@ -35,12 +35,10 @@ function hideAjaxLoader() {
 }
 
 function showPageLoader() {
-	console.debug('[PageLoader] show');
 	store.commit('SET_PAGE_LOADER', true);
 }
 
 function hidePageLoader() {
-	console.debug('[PageLoader] hide');
 	store.commit('SET_PAGE_LOADER', false);
 }
 

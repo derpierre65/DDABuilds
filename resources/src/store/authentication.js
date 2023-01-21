@@ -5,24 +5,24 @@ export default {
 	namespaced: true,
 	state: {
 		user: window.APP.user || {
-			ID: 0,
+			id: 0,
 			name: '',
-			avatarHash: '',
-			isMaintainer: false,
-			unreadNotifications: 0,
+			avatar_hash: '',
+			is_maintainer: false,
+			unread_notifications: 0,
 		},
 	},
 	getters: {
 		isLoggedIn(state) {
-			return !!state.user.ID;
+			return !!state.user.id;
 		},
 	},
 	mutations: {
 		ADD_UNREAD_NOTIFICATIONS(state, payload) {
-			state.user.unreadNotifications += payload;
+			state.user.unread_notifications += payload;
 		},
 		SET_USER(state, payload) {
-			for (let key in payload) {
+			for (const key in payload) {
 				if (Object.prototype.hasOwnProperty.call(payload, key)) {
 					state.user[key] = payload[key];
 				}
@@ -34,10 +34,10 @@ export default {
 			showAjaxLoader();
 
 			let request = axios
-				.delete('/auth')
+				.delete('/auth/')
 				.then(() => {
 					commit('SET_USER', {
-						ID: 0,
+						id: 0,
 					});
 				});
 

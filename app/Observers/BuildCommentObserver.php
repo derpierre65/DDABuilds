@@ -10,7 +10,7 @@ class BuildCommentObserver {
 		$buildComment->build->increment('comments');
 
 		// add notification to build owner, if the user is not the creator
-		if ( $buildComment->build->user->ID !== $buildComment->steamID ) {
+		if ( $buildComment->build->user->id !== $buildComment->user_id ) {
 			$buildComment->build->user->notify(new BuildCommentNotification($buildComment));
 		}
 	}

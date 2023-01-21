@@ -6,37 +6,39 @@ use App\Models\Build;
 use Illuminate\Http\Resources\MissingValue;
 
 /**
- * @mixin Build
+ * @property-read Build $resource
  */
-class BuildResource extends JsonResource {
-	public function toArray($request) {
+class BuildResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'ID' => $this->ID,
-			'author' => $this->author,
-			'title' => $this->title,
-			'description' => $this->description,
-			'date' => $this->date,
-			'steamID' => $this->steamID,
-			'buildStatus' => $this->buildStatus,
-			'timePerRun' => $this->timePerRun,
-			'expPerRun' => $this->expPerRun,
-			'gameModeID' => $this->gameModeID,
-			'gameModeName' => $this->relationLoaded('gameMode') ? $this->gameMode->name : new MissingValue(),
-			'difficultyID' => $this->difficultyID,
-			'difficultyName' => $this->relationLoaded('difficulty') ? $this->difficulty->name : new MissingValue(),
-			'mapID' => $this->mapID,
-			'mapName' => $this->relationLoaded('map') ? $this->map->name : new MissingValue(),
-			'views' => $this->views,
-			'likes' => $this->likes,
-			'comments' => $this->comments,
-			'hardcore' => $this->hardcore,
-			'afkAble' => $this->afkAble,
-			'rifted' => $this->rifted,
-			'waves' => $this->whenLoaded('waves'),
-			'heroStats' => $this->whenLoaded('heroStats'),
-			'isDeleted' => $this->isDeleted,
-			'likeValue' => $this->relationLoaded('likeValue') ? ($this->likeValue ? $this->likeValue->likeValue : 0) : new MissingValue(),
-			'watchStatus' => $this->relationLoaded('watchStatus') ? ($this->watchStatus ? 1 : 0) : new MissingValue(),
+			'id' => $this->resource->id,
+			'author' => $this->resource->author,
+			'title' => $this->resource->title,
+			'description' => $this->resource->description,
+			'user_id' => $this->resource->user_id,
+			'game_mode_id' => $this->resource->game_mode_id,
+			'game_mode_name' => $this->whenLoaded('gameMode', fn() => $this->resource->gameMode->name),
+			'difficulty_id' => $this->resource->difficulty_id,
+			'difficulty_name' => $this->whenLoaded('difficulty', fn() => $this->resource->difficulty->name),
+			'map_id' => $this->resource->map_id,
+			'map_name' => $this->whenLoaded('map', fn() => $this->resource->map->name),
+			'build_status' => $this->resource->build_status,
+			'views' => $this->resource->views,
+			'likes' => $this->resource->likes,
+			'comments' => $this->resource->comments,
+			'is_hardcore' => $this->resource->is_hardcore,
+			'is_afk_able' => $this->resource->is_afk_able,
+			'is_rifted' => $this->resource->is_rifted,
+			'time_per_run' => $this->resource->time_per_run,
+			'exp_per_run' => $this->resource->exp_per_run,
+			'waves' => BuildWaveResource::collection($this->whenLoaded('waves')),
+			'hero_stats' => BuildHeroResource::collection($this->whenLoaded('heroStats')),
+			'like_value' => $this->whenLoaded('likeValue', fn() => $this->resource->likeValue->like_value) ?? new MissingValue(),
+			'watch_status' => $this->whenLoaded('watchStatus', 1) ?? new MissingValue(),
+			'created_at' => $this->resource->created_at,
+			'updated_at' => $this->resource->updated_at,
 		];
 	}
 }

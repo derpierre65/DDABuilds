@@ -64,8 +64,8 @@ export default {
 			axios
 				.post('/bug-reports/', this.form)
 				.then(({ data }) => {
-					if (data.needWait) {
-						this.needWait = data.needWait;
+					if (data.need_wait) {
+						this.needWait = data.need_wait;
 						this.destroyInterval();
 						this.interval = window.setInterval(() => {
 							this.needWait--;
@@ -78,7 +78,7 @@ export default {
 						this.$router.push({
 							name: 'bug-report',
 							params: {
-								id: data.ID,
+								id: data.id,
 								title: formatSEOTitle(data.title),
 							},
 						});

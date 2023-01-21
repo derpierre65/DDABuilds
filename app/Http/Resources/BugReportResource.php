@@ -3,21 +3,23 @@
 namespace App\Http\Resources;
 
 use App\Models\BugReport;
-use Illuminate\Http\Resources\MissingValue;
 
 /**
- * @mixin BugReport
+ * @property-read BugReport $resource
  */
-class BugReportResource extends JsonResource {
-	public function toArray($request) {
+class BugReportResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'ID' => $this->reportID,
-			'title' => $this->title,
-			'description' => $this->description,
-			'time' => $this->time,
-			'steamID' => $this->steamID,
-			'steamName' => $this->relationLoaded('user') ? $this->user->name : new MissingValue(),
-			'status' => $this->status,
+			'id' => $this->resource->id,
+			'user_id' => $this->resource->user_id,
+			'user_name' => $this->whenLoaded('user', fn() => $this->resource->user->name),
+			'title' => $this->resource->title,
+			'description' => $this->resource->description,
+			'status' => $this->resource->status,
+			'created_at' => $this->resource->created_at,
+			'updated_at' => $this->resource->updated_at,
 		];
 	}
 }

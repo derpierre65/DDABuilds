@@ -13,11 +13,11 @@
 				</tr>
 				<tr>
 					<td>{{$t('bug_report.list.created')}}</td>
-					<td>{{formatDate(bugReport.time)}}</td>
+					<td>{{formatDate(bugReport.created_at)}}</td>
 				</tr>
 				<tr>
 					<td>{{$t('bug_report.createdBy')}}</td>
-					<td>{{bugReport.steamName}}</td>
+					<td>{{bugReport.user_name}}</td>
 				</tr>
 				<tr>
 					<td style="width:10%;">{{$t('bug_report.list.title')}}</td>
@@ -49,9 +49,9 @@
 		</form>
 
 		<template v-if="comments.length">
-			<div v-for="comment of comments" :key="comment.ID" class="card">
+			<div v-for="comment of comments" :key="comment.id" class="card">
 				<h5 class="card-header">
-					{{comment.steamName}} ({{formatDate(comment.time)}})
+					{{comment.user_name}} ({{formatDate(comment.created_at)}})
 				</h5>
 				<div class="card-body">
 					<div class="card-text user-content" v-html="comment.description" />
@@ -126,8 +126,8 @@ export default {
 			axios.post(this.baseUrl + '/comments', this.form).then(({ data }) => {
 				this.form.description = '';
 
-				if (data.needWait) {
-					this.needWait = data.needWait;
+				if (data.need_wait) {
+					this.needWait = data.need_wait;
 					this.interval = window.setInterval(() => {
 						this.needWait--;
 						if (this.needWait <= 0) {

@@ -43,8 +43,8 @@ const routes = [
 		},
 	},
 	{
-		name: 'buildAdd',
-		path: '/build-add/:mapID-:name',
+		name: 'build-add',
+		path: '/build-add/:mapId-:name',
 		component: BuildAddView,
 		meta: {
 			requiredAuth: true,

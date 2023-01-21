@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'gameModeID.exists' => 'The selected game mode is invalid.',
+	'game_mode_id.exists' => 'The selected game mode is invalid.',
 
 	'exists' => 'The selected :attribute is invalid.',
 	'email' => 'The :attribute must be a valid email address.',

@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read int $ID
+ * @property-read int $id
  * @property-read string $name
- * @property-read int $isHero
- * @property-read int $isDisabled
+ * @property-read int $is_hero
+ * @property-read int $is_disabled
  */
 class Hero extends Model
 {
-	protected $primaryKey = 'ID';
-
 	protected $guarded = [];
 
 	public $timestamps = false;
 
-	public function towers(): HasMany
+	public function towers() : HasMany
 	{
-		return $this->hasMany(Tower::class, 'heroClassID', 'ID');
+		return $this->hasMany(Tower::class);
 	}
 }

@@ -10,13 +10,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="report in bugReports" :key="report.ID">
+				<tr v-for="report in bugReports" :key="report.id">
 					<td v-if="showActionColumn" class="columnStatus">
 						<button v-if="report.status !== 2" class="btn btn-primary" @click="closeBugReport(report)">
 							<i class="fa fa-lock" />
 						</button>
 					</td>
-					<td class="columnDate">{{formatDate(report.time)}}</td>
+					<td class="columnDate">{{formatDate(report.created_at)}}</td>
 					<td class="columnText">
 						<router-link :to="report.link">{{report.title}}</router-link>
 					</td>
@@ -87,11 +87,11 @@ export default {
 					params,
 				})
 				.then(({ data: { data, pagination } }) => {
-					for (let bugReport of data) {
+					for (const bugReport of data) {
 						bugReport.link = {
 							name: 'bug-report',
 							params: {
-								id: bugReport.ID,
+								id: bugReport.id,
 								title: formatSEOTitle(bugReport.title),
 							},
 						};

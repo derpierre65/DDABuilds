@@ -74,10 +74,11 @@ i18next.init({
 			return value;
 		},
 	},
-}, function (err) {
-	if (err) {
-		console.error(err);
+}, function (error) {
+	if (error) {
+		console.error('i18n error', error);
 	}
+
 	axios.defaults.headers.common['Accept-Language'] = i18next.language;
 
 	isReady = true;

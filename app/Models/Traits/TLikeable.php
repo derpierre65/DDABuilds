@@ -4,19 +4,23 @@ namespace App\Models\Traits;
 
 use App\Models\Like;
 
-trait TLikeable {
-	public function getLikeObjectType() {
-		return lcfirst(array_slice(explode('\\', static::class), -1)[0]);
+/**
+ * @property-read Like $likeValue
+ */
+trait TLikeable
+{
+	public function likeValue()
+	{
+		return $this
+			->hasOne(Like::class, 'object_id', $this->getKeyName())
+			->where([
+				'user_id' => auth()->user()?->getKey() ?? '0',
+				'object_type' => $this->getLikeObjectType(),
+			]);
 	}
 
-	public function likeValue() {
-		$objectType = $this->getLikeObjectType();
-
-		return $this
-			->hasOne(Like::class, 'objectID', $this->getKeyName())
-			->where([
-				['steamID', auth()->id() ?? '0'],
-				['objectType', $objectType],
-			]);
+	public function getLikeObjectType() : string
+	{
+		return lcfirst(array_slice(explode('\\', static::class), -1)[0]);
 	}
 }

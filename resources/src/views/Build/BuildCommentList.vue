@@ -17,7 +17,7 @@
 			</div>
 		</div>
 
-		<build-comment v-for="comment in comments" :key="comment.ID" :comment="comment" />
+		<build-comment v-for="comment in comments" :key="comment.id" :comment="comment" />
 		<infinite-loading :identifier="identifier" spinner="waveDots" type="comment" @infinite="infiniteHandler" />
 	</div>
 </template>

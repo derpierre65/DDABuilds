@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Services\ChangelogParser;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\TestCase;
 use Tests\CreatesApplication;
 

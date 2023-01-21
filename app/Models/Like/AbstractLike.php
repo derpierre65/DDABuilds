@@ -3,38 +3,36 @@
 namespace App\Models\Like;
 
 use App\Models\Like;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-abstract class AbstractLike {
+abstract class AbstractLike
+{
 	public const LIKE = 1;
 
 	public const DISLIKE = -1;
 
-	protected static $baseClass;
+	protected static string $baseClass;
 
-	protected static $enabledDislikes = false;
+	protected static bool $enabledDislikes = false;
 
-	public $objectType;
+	public string $objectType;
 
-	protected $object;
-
-	protected $objectID;
+	protected ?Model $object = null;
 
 	/** @var Like */
 	protected $likeObject;
 
-	public function __construct(int $objectID) {
+	public function __construct(protected int $objectId)
+	{
 		if ( empty(static::$baseClass) ) {
 			throw new BadRequestException('Base class not specified');
 		}
 
-		$this->objectID = $objectID;
 		if ( !is_subclass_of(static::$baseClass, ILikeableModel::class) ) {
 			throw new BadRequestException(sprintf('Class \'%s\' does not extend class \'%s\'.', static::$baseClass, ILikeableModel::class));
 		}
-		elseif ( !$this->getObject() ) {
+		elseif ( !$this->getModel() ) {
 			throw new BadRequestException('objectID not found');
 		}
 
@@ -44,65 +42,88 @@ abstract class AbstractLike {
 
 	abstract public function getNotificationData() : array;
 
-	public function getRecipientID() {
-		return $this->getObject() ? $this->getObject()->steamID : null;
+	public function getRecipientID()
+	{
+		return $this->getModel() ? $this->getModel()->user_id : null;
 	}
 
-	public function getLikeValue() : ?int {
-		$likeObject = $this->getLikeObject();
-
-		return $likeObject ? $likeObject->likeValue : null;
+	public function getLikeValue() : ?int
+	{
+		return $this->getLikeModel()?->like_value;
 	}
 
-	public function getObjectID() {
-		return $this->objectID;
+	public function getObjectId() : int
+	{
+		return $this->objectId;
 	}
 
-	public function isEnabledDislikes() {
+	public function isEnabledDislikes() : bool
+	{
 		return static::$enabledDislikes;
 	}
 
-	public function getObjectType() {
+	public function getObjectType() : string
+	{
 		return $this->objectType;
 	}
 
 	/**
-	 * @return null|ILikeableModel|Builder
+	 * @return Model|null
 	 */
-	public function getObject() : ?ILikeableModel {
+	public function getModel() : ?Model
+	{
 		if ( $this->object === null ) {
-			$this->object = static::$baseClass::find($this->objectID);
+			/** @var Model $baseClass */
+			$baseClass = static::$baseClass;
+			$this->object = $baseClass::query()->find($this->objectId);
 		}
 
 		return $this->object;
 	}
 
-	public function getLikeObject() : ?Like {
+	public function getLikeModel() : ?Like
+	{
 		if ( $this->likeObject === null ) {
-			$this->likeObject = Like::query()->where([
-				['objectType', $this->objectType],
-				['objectID', $this->objectID],
-				['steamID', auth()->id()],
-			])->first();
+			$this->likeObject = Like::query()
+				->where($this->getLikeObjectSearchCondition())
+				->first();
 		}
 
 		return $this->likeObject;
 	}
 
-	public function updateLike(int $newLikeValue) {
-		$likeObject = $this->getLikeObject();
-		DB::table($likeObject->getTable())->where([
-			['objectType', $this->objectType,],
-			['objectID', $this->objectID,],
-			['steamID', auth()->id(),],
-		])->update([
-			'likeValue' => $newLikeValue,
-			'date' => time(),
-		]);
+	public function createLike(int $newLikeValue) : ?Like
+	{
+		return Like::query()
+			->create(array_merge($this->getLikeObjectSearchCondition(), [
+				'likeValue' => $newLikeValue,
+			]));
+	}
 
-		// reset like object
-		$this->likeObject = null;
+	public function updateLike(int $newLikeValue) : ?Like
+	{
+		Like::query()
+			->where($this->getLikeObjectSearchCondition())
+			->update([
+				'likeValue' => $newLikeValue,
+			]);
 
-		return $this->getLikeObject();
+		return $this->likeObject/*->refresh()*/ ;
+	}
+
+	public function deleteLike() : bool
+	{
+		return Like::query()
+			->where($this->getLikeObjectSearchCondition())
+			->delete();
+	}
+
+	protected function getLikeObjectSearchCondition() : array
+	{
+		return [
+			'object_type' => $this->objectType,
+			'object_id' => $this->objectId,
+			'user_id' => auth()->user()?->getKey(),
+		];
 	}
 }

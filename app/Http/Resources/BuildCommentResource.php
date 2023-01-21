@@ -6,22 +6,22 @@ use App\Models\Build\BuildComment;
 use Illuminate\Http\Resources\MissingValue;
 
 /**
- * @mixin BuildComment
+ * @property-read BuildComment $resource
  */
-class BuildCommentResource extends JsonResource {
-	public function toArray($request) {
-		$userLoaded = $this->relationLoaded('user') && $this->user;
-
+class BuildCommentResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'ID' => $this->ID,
-			'steamID' => $this->steamID,
-			'date' => $this->date,
-			'description' => $this->description,
-			'steamName' => $userLoaded ? $this->user->name : new MissingValue(),
-			'avatarHash' => $userLoaded ? $this->user->avatarHash : new MissingValue(),
-			'likes' => $this->likes,
-			'dislikes' => $this->dislikes,
-			'likeValue' => $this->relationLoaded('likeValue') ? ($this->likeValue ? $this->likeValue->likeValue : 0) : new MissingValue(),
+			'id' => $this->resource->id,
+			'user_id' => $this->resource->user_id,
+			'user_name' => $this->whenLoaded('user', fn() => $this->resource->user?->name),
+			'user_avatar' => $this->whenLoaded('user', fn() => $this->resource->user?->avatar_hash),
+			'description' => $this->resource->description,
+			'likes' => $this->resource->likes,
+			'dislikes' => $this->resource->dislikes,
+			'like_value' => $this->whenLoaded('likeValue', fn() => $this->resource->likeValue?->like_value) ?? new MissingValue(),
+			'created_at' => $this->resource->created_at,
 		];
 	}
 }

@@ -3,18 +3,20 @@
 namespace App\Http\Resources;
 
 use App\Models\BugReportComment;
-use Illuminate\Http\Resources\MissingValue;
 
-/** @mixin BugReportComment */
-class BugReportCommentResource extends JsonResource {
+/**
+ * @property-read BugReportComment $resource
+ */
+class BugReportCommentResource extends JsonResource
+{
 	public function toArray($request) : array
 	{
 		return [
-			'ID' => $this->commentID,
-			'steamID' => $this->steamID,
-			'time' => $this->time,
-			'description' => $this->description,
-			'steamName' => $this->whenLoaded('user', fn() => $this->user->name),
+			'id' => $this->resource->getKey(),
+			'user_id' => $this->resource->user_id,
+			'user_name' => $this->whenLoaded('user', fn() => $this->resource->user->name),
+			'description' => $this->resource->description,
+			'created_at' => $this->resource->created_at,
 		];
 	}
 }

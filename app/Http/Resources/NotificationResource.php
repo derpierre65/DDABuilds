@@ -2,31 +2,27 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Support\Carbon;
+use App\Models\DatabaseNotification;
 
 /**
- * @property-read string      $id
- * @property-read string      $type
- * @property-read string      $notifiable_type
- * @property-read int         $notifiable_id
- * @property-read string      $data
- * @property-read Carbon|null $read_at
- * @property-read Carbon      $created_at
- * @property-read Carbon      $updated_at
+ * @property-read DatabaseNotification $resource
  */
-class NotificationResource extends JsonResource {
-	public function toArray($request) {
+class NotificationResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'id' => $this->id,
+			'id' => $this->resource->id,
 			'type' => $this->getType(),
-			'created' => $this->created_at->format('Y-m-d H:i:s'),
-			'read' => !!$this->read_at,
-			'data' => $this->data,
+			'created' => $this->resource->created_at,
+			'read' => !!$this->resource->read_at,
+			'data' => $this->resource->data,
 		];
 	}
 
-	public function getType() {
-		$split = explode('\\', $this->type);
+	public function getType() : string
+	{
+		$split = explode('\\', $this->resource->type);
 
 		return lcfirst(substr(array_pop($split), 0, -12)); // -12 = Notification
 	}

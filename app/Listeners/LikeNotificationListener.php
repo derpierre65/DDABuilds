@@ -14,7 +14,7 @@ class LikeNotificationListener {
 		/** @var LikeNotification $likeNotification */
 		$likeNotification = $event->notification;
 		$likeNotification->getLikeObject()->update([
-			'notificationID' => $likeNotification->id,
+			'notification_id' => $likeNotification->id,
 		]);
 	}
 }

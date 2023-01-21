@@ -2,13 +2,13 @@
 	<div class="card panel-shadow">
 		<div style="display:flex;">
 			<div>
-				<img :src="getSteamAvatar(comment.avatarHash)" alt="avatar profile" class="img-circle avatar">
+				<img :src="getSteamAvatar(comment.user_avatar)" alt="avatar profile" class="img-circle avatar">
 			</div>
 			<div style="margin-left: 15px;">
-				<a :href="'https://steamcommunity.com/profiles/' + comment.steamID" target="_blank">{{comment.steamName}}</a><br>
+				<a :href="'https://steamcommunity.com/profiles/' + comment.user_id" target="_blank">{{comment.user_name}}</a><br>
 				{{$t('')}} <!-- TODO workaround for locale switching -->
 				<ul class="inlineList dotSeparated text-muted">
-					<li><i class="fa fa-clock-o" /> {{formatDate(comment.date)}}</li>
+					<li><i class="fa fa-clock-o" /> {{formatDate(comment.created_at)}}</li>
 					<li><i class="fa fa-thumbs-up" /> {{comment.likes}}</li>
 					<li><i class="fa fa-thumbs-down" /> {{comment.dislikes}}</li>
 				</ul>
@@ -49,11 +49,11 @@ export default {
 	},
 	computed: {
 		canLike() {
-			if (!this.$store.state.authentication.user.ID) {
+			if (!this.$store.getters['authentication/isLoggedIn']) {
 				return false;
 			}
 
-			return this.comment.steamID !== this.$store.state.authentication.user.ID;
+			return this.comment.user_id !== this.$store.state.authentication.user.id;
 		},
 	},
 	methods: {

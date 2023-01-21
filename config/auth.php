@@ -67,8 +67,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\SteamUser::class,
+	        'driver' => 'eloquent',
+	        'model' => App\Models\User::class,
         ],
     ],
 

@@ -3,10 +3,11 @@
 namespace App\Policies;
 
 use App\Models\BugReport;
-use App\Models\SteamUser;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class BugReportPolicy {
+class BugReportPolicy
+{
 	use HandlesAuthorization;
 
 	/**
@@ -16,27 +17,33 @@ class BugReportPolicy {
 		'76561198054589426', // derpierre65
 	];
 
-	public function isMaintainer(SteamUser $steamUser) {
-		return $steamUser->isMaintainer();
+	public function isMaintainer(User $user) : bool
+	{
+		return $user->getIsMaintainerAttribute();
 	}
 
-	public function viewAny(SteamUser $steamUser) {
-		return request()->query->getBoolean('mine', false) && $steamUser->ID || $this->isMaintainer($steamUser);
+	public function viewAny(User $user) : bool
+	{
+		return request()->query->getBoolean('mine', false) || $this->isMaintainer($user);
 	}
 
-	public function view(SteamUser $steamUser, BugReport $bugReport) {
-		return $bugReport->steamID === $steamUser->ID || $this->isMaintainer($steamUser);
+	public function view(User $user, BugReport $bugReport) : bool
+	{
+		return $bugReport->user_id === $user->id || $this->isMaintainer($user);
 	}
 
-	public function create(SteamUser $steamUser) {
-		return $steamUser->ID;
+	public function create(User $user) : bool
+	{
+		return true;
 	}
 
-	public function update(SteamUser $steamUser, BugReport $bugReport) {
-		return $this->isMaintainer($steamUser);
+	public function update(User $user, BugReport $bugReport) : bool
+	{
+		return $this->isMaintainer($user);
 	}
 
-	public function delete(SteamUser $steamUser, BugReport $bugReport) {
-		return $this->isMaintainer($steamUser);
+	public function delete(User $user, BugReport $bugReport) : bool
+	{
+		return $this->isMaintainer($user);
 	}
 }

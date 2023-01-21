@@ -19,7 +19,7 @@ class BugReportCommentController extends Controller
 	public function index(BugReport $bugReport)
 	{
 		return BugReportCommentResource::collection(
-			$bugReport->comments()->orderBy('time', 'DESC')->with('user')->paginate()
+			$bugReport->comments()->latest()->with('user')->paginate()
 		);
 	}
 
@@ -33,23 +33,26 @@ class BugReportCommentController extends Controller
 			'description' => 'required|string',
 		]);
 
-		/** @var BugReportComment $latestBugReportComment */
-		$latestBugReportComment = BugReportComment::select(['time'])->where([['steamID', auth()->id()], [DB::raw('UNIX_TIMESTAMP() - time'), '<', BugReportComment::WAIT_TIME]])->first();
-		if ( $latestBugReportComment ) {
+		/** @var BugReportComment $comment */
+		$comment = BugReportComment::query()
+			->select(['created_at'])
+			->where(['user_id' => auth()->user()->getKey()])
+			->latest()
+			->first();
+		if ( $comment && ($diff = $comment->created_at->diffInSeconds(now())) < BugReportComment::WAIT_TIME) {
 			return response()->json([
-				'needWait' => BugReportComment::WAIT_TIME - (time() - $latestBugReportComment->time),
+				'need_wait' => BugReportComment::WAIT_TIME - $diff,
 			]);
 		}
 
 		/** @var BugReportComment $bugReportComment */
 		$bugReportComment = $bugReport->comments()->create(array_merge($values, [
-			'time' => time(),
-			'steamID' => auth()->id(),
+			'user_id' => auth()->user()->getKey(),
 		]));
-		$bugReportComment->load('user');
+		$bugReportComment->loadMissing('user');
 
 		return [
-			'needWait' => BugReportComment::WAIT_TIME,
+			'need_wait' => BugReportComment::WAIT_TIME,
 			'comment' => new BugReportCommentResource($bugReportComment),
 		];
 	}

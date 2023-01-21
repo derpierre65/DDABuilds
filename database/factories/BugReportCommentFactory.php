@@ -12,7 +12,7 @@ class BugReportCommentFactory extends Factory
 	public function definition() : array
 	{
 		return [
-			'steamID' => $this->faker->steamID,
+			'user_id' => $this->faker->steamID,
 			'time' => $this->faker->unixTime(),
 			'description' => $this->faker->sentences($this->faker->numberBetween(10, 100), true),
 		];

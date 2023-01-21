@@ -5,15 +5,17 @@ namespace App\Http\Resources;
 use App\Models\Map;
 
 /**
- * @mixin Map
+ * @property-read Map $resource
  */
-class MapResource extends JsonResource {
-	public function toArray($request) {
+class MapResource extends JsonResource
+{
+	public function toArray($request) : array
+	{
 		return [
-			'ID' => $this->ID,
-			'name' => $this->name,
-			'units' => $this->units,
-			'difficultyUnits' => $this->whenLoaded('difficultyUnits'),
+			'id' => $this->resource->getKey(),
+			'name' => $this->resource->name,
+			'units' => $this->resource->units,
+			'difficulty_units' => MapAvailableUnits::collection($this->whenLoaded('difficultyUnits')),
 		];
 	}
 }

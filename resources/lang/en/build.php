@@ -1,6 +1,6 @@
 <?php
 
 return [
-	'gameModeID.exists' => 'The selected game mode is invalid.',
+	'game_mode_id.exists' => 'The selected game mode is invalid.',
 	'towers.required' => 'No towers are placed on any wave.',
 ];

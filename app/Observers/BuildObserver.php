@@ -8,8 +8,8 @@ class BuildObserver
 {
 	public function deleting(Build $build)
 	{
-		if ( file_exists($build->getPublicThumbnailPath()) ) {
-			unlink($build->getPublicThumbnailPath());
+		if ( file_exists($build->getPublicThumbnailPathAttribute()) ) {
+			unlink($build->getPublicThumbnailPathAttribute());
 		}
 	}
 }

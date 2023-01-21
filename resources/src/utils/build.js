@@ -1,4 +1,4 @@
-import {formatSEOTitle, ucfirst} from './string';
+import {formatSEOTitle, kebabCase, ucfirst} from './string';
 
 const STATUS_PUBLIC = 1;
 const STATUS_UNLISTED = 2;
@@ -6,44 +6,53 @@ const STATUS_PRIVATE = 3;
 
 function buildLinkParams(build) {
 	return {
-		id: build.ID,
+		id: build.id,
 		title: formatSEOTitle(build.title),
 	};
 }
 
 function getSteamAvatar(avatarHash, size = 'medium') {
-	return 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' + avatarHash.substr(0, 2) + '/' + avatarHash + '_' + size + '.jpg';
+	return 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' + avatarHash.substring(0, 2) + '/' + avatarHash + '_' + size + '.jpg';
 }
 
 function buildListSearch(options = {}) {
+	options = JSON.parse((JSON.stringify(options)));
+
 	// clear empty fields
-	for (let key of Object.keys(options)) {
+	for (const key of Object.keys(options)) {
 		if (!options[key] || Array.isArray(options[key]) && options[key].length === 0) {
 			delete options[key];
 		}
 	}
 
-	for (let key of ['map', 'gameMode', 'difficulty']) {
-		if (options[key]) {
-			if (Array.isArray(options[key])) {
-				let values = [];
-				for (let value of options[key]) {
-					if (typeof value === 'string') {
-						values.push(value);
-					}
-					else {
-						values.push(value.value);
-					}
-				}
+	for (const key of ['map', 'gameMode', 'difficulty']) {
+		if (typeof options[key] === 'undefined') {
+			continue;
+		}
 
-				options[key] = values;
+		if (Array.isArray(options[key])) {
+			let values = [];
+			for (const item of options[key]) {
+				if (typeof item === 'string') {
+					values.push(item);
+				}
+				else {
+					values.push(item.value);
+				}
 			}
 
-			options[key] = Array.isArray(options[key]) ? ucfirst(options[key]).join(',') : ucfirst(options[key]);
+			options[key] = values;
 		}
+
+		options[key] = Array.isArray(options[key]) ? ucfirst(options[key]).join(',') : ucfirst(options[key]);
 	}
 
-	return options;
+	const params = {};
+	for ( const key of Object.keys(options) ) {
+		params[kebabCase(key)] = options[key];
+	}
+
+	return params;
 }
 
 export {

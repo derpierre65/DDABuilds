@@ -2,9 +2,7 @@
 
 namespace App\Models\Like;
 
-/**
- * @property-read string $steamID
- */
-interface ILikeableModel {
+interface ILikeableModel
+{
 	public function likeValue();
 }

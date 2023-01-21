@@ -5,14 +5,14 @@ namespace App\Models\Like;
 use App\Models\Build;
 
 /**
- * @method Build getObject()
+ * @method Build getModel()
  */
 class BuildLike extends AbstractLike {
-	protected static $baseClass = Build::class;
+	protected static string $baseClass = Build::class;
 
 	public function getNotificationData() : array {
 		return [
-			'build' => $this->getObject()->getNotificationData(),
+			'build' => $this->getModel()->getNotificationData(),
 		];
 	}
 }

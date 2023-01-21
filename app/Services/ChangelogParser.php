@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use DateTimeImmutable;
-
 class ChangelogParser {
 	const VERSION_LINE_PREFIX = '^#{2}\s?';
 

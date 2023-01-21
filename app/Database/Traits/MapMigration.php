@@ -11,7 +11,7 @@ trait MapMigration
 	{
 		Map::query()->updateOrCreate(['name' => $name], [
 			'units' => $units,
-			'mapCategoryID' => $this->addMapCategory($categoryName)->getKey(),
+			'map_category_id' => $this->addMapCategory($categoryName)->getKey(),
 		]);
 	}
 

@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->call(SteamUserSeeder::class);
+		$this->call(UserSeeder::class);
 		$this->call(BuildSeeder::class);
 		$this->call(BugReportSeeder::class);
 	}

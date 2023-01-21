@@ -59,19 +59,19 @@
 						<div class="d-flex flex-shrink-1 flex-wrap" style="gap: 16px">
 							<div>
 								<div class="form-check">
-									<input id="buildHardcore" v-model="filter.hardcore" class="form-check-input" type="checkbox">
+									<input id="buildHardcore" v-model="filter.isHardcore" class="form-check-input" type="checkbox">
 									<label class="form-check-label" for="buildHardcore"> {{$t('build.hardcore')}}</label>
 								</div>
 							</div>
 							<div>
 								<div class="form-check">
-									<input id="buildAFKAble" v-model="filter.afkAble" class="form-check-input" type="checkbox">
+									<input id="buildAFKAble" v-model="filter.isAfkAble" class="form-check-input" type="checkbox">
 									<label class="form-check-label" for="buildAFKAble"> {{$t('build.afkAble')}}</label>
 								</div>
 							</div>
 							<div>
 								<div class="form-check">
-									<input id="buildRifted" v-model="filter.rifted" class="form-check-input" type="checkbox">
+									<input id="buildRifted" v-model="filter.isRifted" class="form-check-input" type="checkbox">
 									<label class="form-check-label" for="buildRifted"> {{$t('build.rifted')}}</label>
 								</div>
 							</div>
@@ -95,14 +95,14 @@
 							<th :class="getHeadlineClass('title')">
 								<router-link :to="{name: $route.name, query: getSortQuery('title')}">{{$t('build.title')}}</router-link>
 							</th>
-							<th :class="getHeadlineClass('difficultyID')">
-								<router-link :to="{name: $route.name, query: getSortQuery('difficultyID')}">{{$t('build.difficulty')}}</router-link>
+							<th :class="getHeadlineClass('difficulty_id')">
+								<router-link :to="{name: $route.name, query: getSortQuery('difficulty_id')}">{{$t('build.difficulty')}}</router-link>
 							</th>
-							<th :class="getHeadlineClass('mapID')">
-								<router-link :to="{name: $route.name, query: getSortQuery('mapID')}">{{$t('build.map')}}</router-link>
+							<th :class="getHeadlineClass('map_id')">
+								<router-link :to="{name: $route.name, query: getSortQuery('map_id')}">{{$t('build.map')}}</router-link>
 							</th>
-							<th :class="getHeadlineClass('gameModeID')">
-								<router-link :to="{name: $route.name, query: getSortQuery('gameModeID')}">{{$t('build.gameMode')}}</router-link>
+							<th :class="getHeadlineClass('game_mode_id')">
+								<router-link :to="{name: $route.name, query: getSortQuery('game_mode_id')}">{{$t('build.gameMode')}}</router-link>
 							</th>
 							<th :class="getHeadlineClass('author')">
 								<router-link :to="{name: $route.name, query: getSortQuery('author')}">{{$t('build.author')}}</router-link>
@@ -113,8 +113,8 @@
 							<th :class="getHeadlineClass('views')" class="columnDigits">
 								<router-link :to="{name: $route.name, query: getSortQuery('views')}">{{$t('build.views')}}</router-link>
 							</th>
-							<th :class="getHeadlineClass('date')" class="columnDate">
-								<router-link :to="{name: $route.name, query: getSortQuery('date')}">{{$t('build.date')}}</router-link>
+							<th :class="getHeadlineClass('created_at')" class="columnDate">
+								<router-link :to="{name: $route.name, query: getSortQuery('created_at')}">{{$t('build.date')}}</router-link>
 							</th>
 							<th class="text-right">
 								<a v-b-tooltip.left.hover="$t('buildList.viewType.' + (viewMode === 'table' ? 'grid' : 'table'))" class="pointer" @click="changeViewMode">
@@ -124,24 +124,24 @@
 						</tr>
 					</thead>
 					<tbody v-if="viewMode === 'table'">
-						<tr v-for="build in builds" :key="build.ID">
+						<tr v-for="build in builds" :key="build.id">
 							<td>
-								<span v-if="build.rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
-								<span v-if="build.afkAble" class="badge badge-success">{{$t('build.afkAble')}}</span>
-								<span v-if="build.hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
+								<span v-if="build.is_rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
+								<span v-if="build.is_afk_able" class="badge badge-success">{{$t('build.afkAble')}}</span>
+								<span v-if="build.is_hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
 								<router-link :to="{name: 'build', params: buildLinkParams(build)}">{{build.title}}</router-link>
 							</td>
-							<td :class="'difficulty-' + build.difficultyID">
-								<router-link :to="{name: $route.name, query: buildListSearch({difficulty: build.difficultyName})}">
-									{{$t('difficulty.' + build.difficultyName)}}
+							<td :class="'difficulty-' + build.difficulty_id">
+								<router-link :to="{name: $route.name, query: buildListSearch({difficulty: build.difficulty_name})}">
+									{{$t('difficulty.' + build.difficulty_name)}}
 								</router-link>
 							</td>
 							<td>
-								<router-link :to="{name: $route.name, query: buildListSearch({map: build.mapName})}">{{$t('map.' + build.mapName)}}</router-link>
+								<router-link :to="{name: $route.name, query: buildListSearch({map: build.map_name})}">{{$t('map.' + build.map_name)}}</router-link>
 							</td>
 							<td>
-								<router-link :to="{name: $route.name, query: buildListSearch({gameMode: build.gameModeName})}">
-									{{$t('gameMode.' + build.gameModeName)}}
+								<router-link :to="{name: $route.name, query: buildListSearch({gameMode: build.game_mode_name})}">
+									{{$t('gameMode.' + build.game_mode_name)}}
 								</router-link>
 							</td>
 							<td>
@@ -149,29 +149,29 @@
 							</td>
 							<td class="columnDigits">{{number(build.likes)}}</td>
 							<td class="columnDigits">{{number(build.views)}}</td>
-							<td class="columnDate" colspan="2">{{formatDate(build.date)}}</td>
+							<td class="columnDate" colspan="2">{{formatDate(build.created_at)}}</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
 			<ol v-if="viewMode === 'grid'" class="buildList">
-				<li v-for="build in builds" :key="build.ID">
+				<li v-for="build in builds" :key="build.id">
 					<div class="buildBox">
-						<i v-if="build.buildStatus !== buildStatusPublic" v-b-tooltip.hover="$t('buildList.isPrivate')"
+						<i v-if="build.build_status !== buildStatusPublic" v-b-tooltip.hover="$t('buildList.isPrivate')"
 							class="fa fa-eye-slash buildUnlisted" />
 						<div class="box128">
 							<div class="buildDataContainer">
-								<span v-if="build.rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
-								<span v-if="build.afkAble" class="badge badge-success">{{$t('build.afkAble')}}</span>
-								<span v-if="build.hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
+								<span v-if="build.is_rifted" class="badge badge-success">{{$t('build.rifted')}}</span>
+								<span v-if="build.is_afk_able" class="badge badge-success">{{$t('build.afkAble')}}</span>
+								<span v-if="build.is_hardcore" class="badge badge-success">{{$t('build.hardcore')}}</span>
 								<h3 class="buildSubject">
 									<router-link :to="{name: 'build', params: buildLinkParams(build)}">{{build.title}}</router-link>
 								</h3>
 
 								<ul class="inlineList dotSeparated buildMetaData">
 									<li><i class="fa fa-user" /> <router-link :to="{name: $route.name, query: {author: build.author}}">{{build.author}}</router-link></li>
-									<li><i class="fa fa-clock-o" /> {{formatDate(build.date)}}</li>
+									<li><i class="fa fa-clock-o" /> {{formatDate(build.created_at)}}</li>
 									<li><i class="fa fa-eye" /> {{number(build.views)}}</li>
 									<li><i class="fa fa-comment-o" /> {{number(build.comments)}}</li>
 									<li :class="{'text-success': build.likes > 0}">
@@ -179,25 +179,28 @@
 									</li>
 								</ul>
 
-								<img :src="`/assets/user-files/thumbnails/${build.ID}.png`" alt="" class="img-responsive" style="height: 200px;margin: 15px auto auto;">
+								<img :src="`/assets/user-files/thumbnails/${build.id}.png`" alt="" class="img-responsive" style="height: 200px;margin: 15px auto auto;">
 							</div>
 						</div>
 						<div class="buildFiller" />
 						<div class="buildFooter">
 							<ul class="inlineList dotSeparated buildInformation">
 								<li>
-									<i class="fa fa-map" /> <router-link :to="{name: $route.name, query: buildListSearch({map: build.mapName})}">
-										{{$t('map.' + build.mapName)}}
+									<i class="fa fa-map" />
+									<router-link :to="{name: $route.name, query: buildListSearch({map: build.map_name})}">
+										<span>{{$t('map.' + build.map_name)}}</span>
 									</router-link>
 								</li>
 								<li>
-									<i class="fa fa-gamepad" /> <router-link :to="{name: $route.name, query: buildListSearch({gameMode: build.gameModeName})}">
-										{{$t('gameMode.' + build.gameModeName)}}
+									<i class="fa fa-gamepad" />
+									<router-link :to="{name: $route.name, query: buildListSearch({gameMode: build.game_mode_name})}">
+										<span>{{$t('gameMode.' + build.game_mode_name)}}</span>
 									</router-link>
 								</li>
-								<li :class="'difficulty-' + build.difficultyID">
-									<i class="fa fa-tachometer" /> <router-link :to="{name: $route.name, query: buildListSearch({difficulty: build.difficultyName})}">
-										{{$t('difficulty.' + build.difficultyName)}}
+								<li :class="'difficulty-' + build.difficulty_id">
+									<i class="fa fa-tachometer" />
+									<router-link :to="{name: $route.name, query: buildListSearch({difficulty: build.difficulty_name})}">
+										<span>{{$t('difficulty.' + build.difficulty_name)}}</span>
 									</router-link>
 								</li>
 							</ul>
@@ -222,7 +225,7 @@ import {hidePageLoader, showPageLoader} from '../../store';
 import {buildLinkParams, buildListSearch, STATUS_PUBLIC} from '../../utils/build';
 import formatDate from '../../utils/date';
 import number from '../../utils/math/number';
-import {lcfirst} from '../../utils/string';
+import {kebabCase, lcfirst} from '../../utils/string';
 
 export default {
 	name: 'BuildListView',
@@ -255,24 +258,24 @@ export default {
 	},
 	computed: {
 		gameModeSelect() {
-			let select = [];
-			for (let name of Object.keys(this.$t('gameMode'))) {
+			const select = [];
+			for (const name of Object.keys(this.$t('gameMode'))) {
 				select.push({ label: this.$t('gameMode.' + name), value: name });
 			}
 
 			return select;
 		},
 		difficultySelect() {
-			let select = [];
-			for (let name of Object.keys(this.$t('difficulty'))) {
+			const select = [];
+			for (const name of Object.keys(this.$t('difficulty'))) {
 				select.push({ label: this.$t('difficulty.' + name), value: name });
 			}
 
 			return select;
 		},
 		mapSelect() {
-			let select = [];
-			for (let name of Object.keys(this.$t('map'))) {
+			const select = [];
+			for (const name of Object.keys(this.$t('map'))) {
 				select.push({ label: this.$t('map.' + name), value: name });
 			}
 
@@ -310,27 +313,27 @@ export default {
 				difficulty: [],
 				gameMode: [],
 				map: [],
-				rifted: false,
-				hardcore: false,
-				afkAble: false,
+				isRifted: false,
+				isHardcore: false,
+				isAfkAble: false,
 			};
 		},
 		getHeadlineClass(field) {
-			if (this.$route.query.sortField !== field) {
+			if (this.$route.query['sort-field'] !== field) {
 				return {};
 			}
 
-			let isDesc = this.$route.query.sortOrder === 'DESC';
+			const isDESC = this.$route.query['sort-order'] === 'DESC';
 
 			return {
-				DESC: isDesc,
-				ASC: !isDesc,
+				DESC: isDESC,
+				ASC: !isDESC,
 			};
 		},
 		updateMultipleFilters() {
-			for (let key of ['gameMode', 'map', 'difficulty']) {
+			for (const key of ['gameMode', 'map', 'difficulty']) {
 				let list = [];
-				for (let value of this.filter[key]) {
+				for (const value of this.filter[key]) {
 					if (typeof value === 'string') {
 						list.push({ label: this.$t(key + '.' + value), value: value });
 					}
@@ -345,27 +348,26 @@ export default {
 		updateFilter() {
 			this.filter = this.getDefaultFilter();
 
-			for (let key of Object.keys(this.$route.query)) {
-				if (typeof this.filter[key] === 'undefined') {
+			for (const key of Object.keys(this.filter)) {
+				const testKey = kebabCase(key);
+				const value = this.$route.query[testKey];
+				if (typeof value === 'undefined') {
 					continue;
 				}
 
 				if (Array.isArray(this.filter[key])) {
-					this.filter[key] = lcfirst(this.$route.query[key].split(','));
+					this.filter[key] = lcfirst(value.split(','));
 				}
 				else if (typeof this.filter[key] === 'boolean') {
-					this.filter[key] = typeof this.$route.query[key] === 'boolean' && this.$route.query[key]
-						|| this.$route.query[key] === null
-						|| parseInt(this.$route.query[key]) === 1
-						|| this.$route.query[key] === 'true';
+					this.filter[key] = typeof value === 'boolean' && value || value === null || parseInt(value) === 1 || value === 'true';
 				}
 				else {
-					this.filter[key] = lcfirst(this.$route.query[key]);
+					this.filter[key] = lcfirst(value);
 				}
 			}
 
 			let filterStatus = false;
-			for (let key of Object.keys(this.filter)) {
+			for (const key of Object.keys(this.filter)) {
 				if (!Array.isArray(this.filter[key]) && this.filter[key] || Array.isArray(this.filter[key]) && this.filter[key].length) {
 					filterStatus = true;
 					break;
@@ -377,30 +379,45 @@ export default {
 			this.isFilterActive = filterStatus;
 		},
 		getSortQuery(sortField) {
-			let queryOptions = {
-				sortField,
-			};
-			let routeQuery = Object.assign({}, this.$route.query);
-			if (routeQuery.sortField === sortField) {
-				queryOptions.sortOrder = routeQuery.sortOrder === 'DESC' ? 'ASC' : 'DESC';
-				delete routeQuery.sortOrder;
-				delete routeQuery.sortField;
-			}
-			queryOptions = Object.assign(routeQuery, queryOptions);
+			const params = this.buildListSearch(JSON.parse(JSON.stringify(this.filter)));
+			const query = this.$route.query;
 
-			return queryOptions;
+			params['sort-field'] = sortField;
+
+			if (query['sort-field'] === sortField) {
+				params['sort-order'] = query['sort-order'] === 'DESC' ? 'ASC' : 'DESC';
+				if (query['sort-order'] !== 'DESC') {
+					params['sort-order'] = 'DESC';
+				}
+				else {
+					delete params['sort-order'];
+					delete params['sort-field'];
+				}
+			}
+			else {
+				delete params['sort-order'];
+			}
+
+			return params;
 		},
 		fetchList() {
 			showPageLoader();
 			this.updateFilter();
 
-			const filters = this.buildListSearch(JSON.parse(JSON.stringify(this.filter)));
+			const filters = this.buildListSearch(Object.assign(JSON.parse(JSON.stringify(this.filter)), this.fetchParams, {
+				page,
+				sortOrder: this.$route.query['sort-order'],
+				sortField: this.$route.query['sort-field'],
+			}));
 			const page = this.$route.params.page || 0;
+			const params = {};
+
+			for (const key of Object.keys(filters)) {
+				params[kebabCase(key)] = filters[key];
+			}
 
 			axios
-				.get('/builds/', {
-					params: Object.assign({}, filters, this.fetchParams, {page}),
-				})
+				.get('/builds/', { params })
 				.then(({ data: { data, pagination } }) => {
 					this.builds = data;
 					this.page = pagination.current_page;
@@ -415,7 +432,7 @@ export default {
 			try {
 				this.$router.push({
 					name: this.$route.name,
-					query: buildListSearch({ ...this.filter }),
+					query: buildListSearch(this.filter),
 				});
 			}
 			catch (e) {

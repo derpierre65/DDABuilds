@@ -30,7 +30,7 @@ router.afterEach(() => {
 });
 
 router.beforeEach((to, from, next) => {
-	if (to.meta.requiredAuth && !store.state.authentication.user.ID) {
+	if (to.meta.requiredAuth && !store.state.authentication.user.id) {
 		return next({ name: 'home' });
 	}
 

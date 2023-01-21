@@ -5,16 +5,18 @@ namespace App\Models\Like;
 use App\Models\Build\BuildComment;
 
 /**
- * @method BuildComment getObject()
+ * @method BuildComment getModel()
  */
-class CommentLike extends AbstractLike {
-	protected static $enabledDislikes = true;
+class CommentLike extends AbstractLike
+{
+	protected static bool $enabledDislikes = true;
 
-	protected static $baseClass = BuildComment::class;
+	protected static string $baseClass = BuildComment::class;
 
-	public function getNotificationData() : array {
+	public function getNotificationData() : array
+	{
 		return [
-			'build' => $this->getObject()->build->getNotificationData(),
+			'build' => $this->getModel()->build->getNotificationData(),
 		];
 	}
 }
