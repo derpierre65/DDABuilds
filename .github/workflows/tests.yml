@@ -54,8 +54,8 @@ jobs:
       - name: NPM - Install Dependencies
         run: npm install
 
-      - name: NPM - Hot (Mix)
-        run: npm run dev-hot > /dev/null 2>&1 &
+      - name: NPM - Build
+        run: npm run build
 
       - name: Run ESLint
         run: npm run eslint

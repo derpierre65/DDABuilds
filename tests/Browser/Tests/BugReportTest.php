@@ -13,7 +13,7 @@ class BugReportTest extends DuskTestCase {
 	protected static $title = '';
 
 	public function testCreate() {
-		BugReport::query()->where('steamID', 1337)->delete();
+		BugReport::query()->where(['steamID' => 1337])->delete();
 
 		$this->browse(function (Browser $I) {
 			$I->loginAsTester();
@@ -23,7 +23,7 @@ class BugReportTest extends DuskTestCase {
 				$I->navigateTo('Report Bug');
 			});
 
-			$I->waitForText('Issues reported here are community reviewed and the reviewers are not related to Chromatic Games or Dungeon Defenders: Awakened employees in anyway.');
+			$I->waitForText('Bug reports reported here are community reviewed and the reviewers are not related to Chromatic Games or Dungeon Defenders: Awakened employees in anyway.');
 
 			$title = implode(' ', $this->faker->words);
 			$description = $this->faker->text;
