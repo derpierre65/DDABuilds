@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "ext-gd": "*",
+        "ext-imagick": "*",
         "ext-json": "*",
         "doctrine/dbal": "^2.11",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "intervention/image": "^2.7",
         "laravel/framework": "^9.43",
         "laravel/tinker": "^2.0"
     },

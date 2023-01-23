@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
 
 /**
  * @property-read int $id
@@ -164,23 +164,22 @@ class Build extends Model implements ILikeableModel
 
 	public function generateThumbnail() : bool
 	{
-		$mapResource = imagecreatefrompng($this->map->getPublicPathAttribute());
-		if ( !$mapResource ) {
-			Log::debug('map resource failed');
+		/** @var Image $mapImage */
+		$mapImage = app('image')->make($this->map->getPublicPathAttribute());
+		if ( !$mapImage ) {
 			return false;
 		}
 
-		$mapResource = imagescale($mapResource, 1024, 1024, IMG_BICUBIC_FIXED);
-		if ( !$mapResource ) {
-			Log::debug('scale failed', [get_loaded_extensions()]);
-			return false;
-		}
+		$mapImage->resize(1024, 1024);
 
 		/** @var Tower $buildTower */
 		foreach ( $this->waves()->first()->towers()->with(['hero'])->get() as $index => $buildTower ) {
 			$towerSizeX = $towerSizeY = 35;
 
-			if ( $buildTower->hero->name === 'monk' ) {
+			if ( $buildTower->image_size ) {
+				[$towerSizeX, $towerSizeY] = array_map('intval', explode('x', $buildTower->image_size));
+			}
+			elseif ( $buildTower->hero->name === 'monk' ) {
 				$towerSizeX = $towerSizeY = 100;
 			}
 			elseif ( $buildTower->hero->name === 'huntress' ) {
@@ -190,39 +189,34 @@ class Build extends Model implements ILikeableModel
 				$towerSizeX = $towerSizeY = 0;
 			}
 
-			$towerResource = imagecreatefrompng($buildTower->getPublicPathAttribute());
+			/** @var Image $towerImage */
+			$towerImage = app('image')->make($buildTower->getPublicPathAttribute());
 			if ( $towerSizeX && $towerSizeY ) {
-				$towerResource = imagescale($towerResource, $towerSizeX, $towerSizeY, IMG_BICUBIC_FIXED);
+				$towerImage->resize($towerSizeX, $towerSizeY);
 			}
 			else {
-				$imageInfo = getimagesize($buildTower->getPublicPathAttribute());
-				$towerSizeX = $imageInfo[0];
-				$towerSizeY = $imageInfo[1];
+				$towerSizeX = $towerImage->getWidth();
+				$towerSizeY = $towerImage->getHeight();
 			}
 
 			$rotation = -$buildTower->pivot->rotation;
 			$x = $buildTower->pivot->x;
 			$y = $buildTower->pivot->y;
 			if ( $rotation ) {
-				$png = imagecreatetruecolor($towerSizeX, $towerSizeY);
-				imagesavealpha($png, true);
-				$pngTransparency = imagecolorallocatealpha($png, 0, 0, 0, 127);
-				$towerResource = imagerotate($towerResource, $rotation, $pngTransparency);
-				$newTowerSizeX = imagesx($towerResource);
-				$newTowerSizeY = imagesy($towerResource);
+				$towerImage->rotate($rotation, [0, 0, 0, 0]);
+				$newTowerSizeX = $towerImage->width();
+				$newTowerSizeY = $towerImage->height();
 				$x -= ($newTowerSizeX - $towerSizeX) / 2;
 				$y -= ($newTowerSizeY - $towerSizeY) / 2;
-				$towerSizeX = $newTowerSizeX;
-				$towerSizeY = $newTowerSizeY;
+				$towerImage->resize($newTowerSizeX, $newTowerSizeY);
 			}
 
-			imagecopy($mapResource, $towerResource, $x, $y, 0, 0, $towerSizeX, $towerSizeY);
+			$mapImage->insert($towerImage, 'top-left', (int) $x, (int) $y);
 		}
 
-		return imagepng(
-			imagescale($mapResource, 200, 200, IMG_BICUBIC_FIXED),
-			$this->getPublicThumbnailPathAttribute()
-		);
+		$mapImage->resize(200, 200)->save($this->getPublicThumbnailPathAttribute());
+
+		return file_exists($this->getPublicThumbnailPathAttribute());
 	}
 
 	public function getPublicThumbnailPathAttribute() : string
