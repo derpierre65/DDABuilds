@@ -404,12 +404,12 @@ export default {
 			showPageLoader();
 			this.updateFilter();
 
+			const page = this.$route.params.page || 0;
 			const filters = this.buildListSearch(Object.assign(JSON.parse(JSON.stringify(this.filter)), this.fetchParams, {
 				page,
 				sortOrder: this.$route.query['sort-order'],
 				sortField: this.$route.query['sort-field'],
 			}));
-			const page = this.$route.params.page || 0;
 			const params = {};
 
 			for (const key of Object.keys(filters)) {
