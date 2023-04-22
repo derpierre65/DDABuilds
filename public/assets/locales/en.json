@@ -62,7 +62,8 @@
 	},
 	"error": {
 		"default": "An error has occurred, please try again later.",
-		"invalidInput": "Please correct the erroneous fields marked below."
+		"invalidInput": "Please correct the erroneous fields marked below.",
+		"maintenance": "Maintenance is in progress, please try again later."
 	},
 	"menu": {
 		"buildList": "Builds",

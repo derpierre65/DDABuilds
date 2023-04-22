@@ -44,6 +44,19 @@ Vue.use(InfiniteLoading, {
 // directives
 Vue.use(acceptanceTest);
 
+axios.interceptors.response.use((response) => {
+	return response;
+}, (response) => {
+	if (response.response.status === 503) {
+		Vue.notify({
+			type: 'error',
+			text: i18n.t('error.maintenance'),
+		});
+	}
+
+	return Promise.reject(response);
+});
+
 initI18n(() => {
 	new Vue({
 		el: '#app',
