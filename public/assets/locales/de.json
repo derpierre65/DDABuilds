@@ -62,7 +62,8 @@
 	},
 	"error": {
 		"default": "Es ist ein Fehler aufgetreten, bitte versuche es später erneut.",
-		"invalidInput": "Ihre Angaben sind ungültig. Bitte überprüfen Sie die markierten Eingabefelder."
+		"invalidInput": "Ihre Angaben sind ungültig. Bitte überprüfen Sie die markierten Eingabefelder.",
+		"maintenance": "Es werden Wartungsarbeiten durchgeführt, bitte versuche es später erneut."
 	},
 	"menu": {
 		"buildList": "Baupläne",
