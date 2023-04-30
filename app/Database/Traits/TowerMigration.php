@@ -25,10 +25,10 @@ trait TowerMigration
 			'hero_id' => $hero->getKey(),
 			'is_resizable' => $isResizable,
 			'is_Rotatable' => $isRotatable,
-			'manaCost' => $manaCost,
+			'mana' => $manaCost,
 			'max_unit_cost' => $maxUnitCost,
 			'unit_cost' => $unitCost,
-			'unitType' => $unitType,
+			'unit_type' => $unitType,
 		]);
 	}
 
