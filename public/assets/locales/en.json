@@ -194,6 +194,7 @@
 		"summoner": "Summoner",
 		"hints": "Hints",
 		"seriesEVA": "Series EV-A",
+		"guardian": "Guardian",
 		"world": "World",
 		"arrows": "Arrows"
 	},
@@ -233,6 +234,11 @@
 		"summoner_3": "Siren Minion",
 		"summoner_4": "Mage Minion",
 		"summoner_5": "Ogre Minion",
+		"guardian_1": "Holy Bulwark",
+		"guardian_2": "Empowering Shrine",
+		"guardian_3": "Owl Perch",
+		"guardian_4": "Holy Cannon",
+		"guardian_5": "The Obelisk",
 		"crystalCore": "Crystal Core",
 		"hint1": "Hint 1",
 		"hint2": "Hint 2",
@@ -274,7 +280,9 @@
 		"foundriesAndForges": "Foundries and Forges",
 		"theBazaar": "The Bazaar",
 		"theLostMetropolis": "The Lost Metropolis",
-		"yuletideVillage": "Yuletide Village"
+		"yuletideVillage": "Yuletide Village",
+		"theForsakenTemple": "The Forsaken Temple",
+		"castleArmory": "Castle Armory"
 	},
 	"mapCategory": {
 		"campaign": "Campaign",
