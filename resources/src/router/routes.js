@@ -7,7 +7,6 @@ import NotificationListView from '../views/NotificationListView';
 const NotFound = () => import('../views/NotFound');
 const IndexView = () => import('../views/IndexView');
 const BuildListView = () => import('../views/Build/BuildListView');
-const ChangelogView = () => import('../views/ChangelogView');
 const BugReportListView = () => import('../views/BugReport/BugReportListView');
 const BugReportView = () => import('../views/BugReport/BugReportView');
 const BugReportAddView = () => import('../views/BugReport/BugReportAddView');
@@ -27,11 +26,6 @@ const routes = [
 		name: 'buildList',
 		path: '/builds/:page?',
 		component: BuildListView,
-	},
-	{
-		name: 'changelog',
-		path: '/changelog',
-		component: ChangelogView,
 	},
 	// builds
 	{

@@ -69,7 +69,11 @@
 		<footer :class="{'bg-dark': !darkMode, 'bg-secondary': darkMode}" class="navbar navbar-dark navbar-footer navbar-expand-lg">
 			<div class="container">
 				<ul class="nav navbar-nav">
-					<router-link :to="{name: 'changelog'}" class="nav-item" tag="li"><a class="nav-link">Changelog</a></router-link>
+					<li class="nav-item">
+            <a target="_blank" href="https://github.com/derpierre65/DDABuilds/releases"
+               rel="noopener noreferrer"
+               class="nav-link">Changelog</a>
+          </li>
 					<li class="nav-item">
 						<a class="nav-link" href="https://github.com/derpierre65/DDABuilds" target="_blank">GitHub <i class="fa fa-external-link" /></a>
 					</li>
