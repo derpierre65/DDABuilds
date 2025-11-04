@@ -7,8 +7,8 @@ use App\Models\Tower;
 
 trait TowerMigration
 {
-	public function addTower(string $heroName, string $towerName, int $unitCost, int $maxUnitCost, int $manaCost, bool $isResizable, bool $isRotatable, int $unitType = 0)
-	{
+	public function addTower(string $heroName, string $towerName, int $unitCost, int $maxUnitCost, int $manaCost, bool $isResizable, bool $isRotatable, int $unitType = 0): void
+    {
 		$hero = Hero::query()->where(['name' => $heroName])->first();
 		if ( !$hero ) {
 			\Log::debug('Fail to create tower, hero does not exists.', [
@@ -31,6 +31,11 @@ trait TowerMigration
 			'unit_type' => $unitType,
 		]);
 	}
+
+    public function updateTower(string $name, array $update): void
+    {
+        Tower::query()->where(['name' => $name])->update($update);
+    }
 
 	public function deleteTower(string $towerName) : void
 	{
