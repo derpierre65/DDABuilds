@@ -1,0 +1,5 @@
+@import 'tailwindcss' prefix(tw) source('../');
+
+.link {
+  @apply tw:text-blue-400 tw:hover:underline;
+}

@@ -4,6 +4,7 @@
 import { defineConfig } from '#q-app/wrappers';
 
 process.env.VITE_APP_VERSION = process.env.NPM_PACKAGE_VERSION || '0.0.0';
+process.env.VITE_BUILD_TIMESTAMP = Date.now().toString();
 
 export default defineConfig((/* ctx */) => {
   return {
@@ -12,6 +13,7 @@ export default defineConfig((/* ctx */) => {
     boot: [
       'prepare',
       'auth',
+      'i18n',
     ],
 
     css: [ 'app.scss', ],
