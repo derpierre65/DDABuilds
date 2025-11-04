@@ -10,7 +10,8 @@ Copy `.env.example` to `.env`, configure `DB_*`, `APP_URL` and `STEAM_API_KEY`.
 composer install
 php artisan key:generate
 
-# required devDependencies
+# install node modules and start frontend
+cd frontend
 npm install
 npm run build
 ```
@@ -24,7 +25,8 @@ php artisan down --secret=SECRET
 # migrate database
 php artisan migrate
 
-# required devDependencies
+# install node modules and build frontend
+cd frontend
 npm install
 npm run build
 
