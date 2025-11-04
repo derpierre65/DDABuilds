@@ -9,6 +9,7 @@ use App\Observers\BuildCommentObserver;
 use App\Observers\BuildObserver;
 use Faker\Factory;
 use Faker\Generator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,5 +31,9 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Build::observe(BuildObserver::class);
 		Build\BuildComment::observe(BuildCommentObserver::class);
+
+        if (app()->isLocal()) {
+            URL::forceRootUrl(config('app.url'));
+        }
 	}
 }

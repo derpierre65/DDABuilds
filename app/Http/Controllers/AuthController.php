@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Auth\SteamAuth;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,11 @@ class AuthController extends Controller
 
 		throw new BadRequestHttpException();
 	}
+
+    public function user()
+    {
+        return new UserResource(auth()->user());
+    }
 
 	public function logout() : JsonResponse
 	{

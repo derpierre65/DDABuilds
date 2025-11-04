@@ -23,11 +23,10 @@ class Kernel extends HttpKernel {
 	/** @inheritdoc */
 	protected $middleware = [
 		PreventRequestsDuringMaintenance::class,
-		// \Fruitcake\Cors\HandleCors::class,
+		\Fruitcake\Cors\HandleCors::class,
 		StartSession::class,
 		ValidatePostSize::class,
 		TrimStrings::class,
-		ConvertEmptyStringsToNull::class,
 	];
 
 	/** @inheritdoc */

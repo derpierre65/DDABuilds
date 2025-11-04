@@ -14,12 +14,13 @@ use Illuminate\Support\Facades\Route;
 
 // routes where an authentication is not required
 Route::group(['middleware' => ['auth:guest']], function () {
-	Route::get('/auth/steam', [AuthController::class, 'auth']);
+	Route::get('/auth/steam', [AuthController::class, 'auth'])->name('auth');
 });
 
 // routes where an authentication is required
 Route::group(['middleware' => ['auth:user']], function () {
-	Route::delete('/auth', [AuthController::class, 'logout']);
+	Route::get('/auth', [AuthController::class, 'user'])->name('auth.user');
+	Route::delete('/auth', [AuthController::class, 'logout'])->name('auth.logout');
 
 	Route::post('/builds/{build}/watch', [BuildController::class, 'watch']);
 
