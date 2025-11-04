@@ -1,17 +1,24 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header bordered>
-      <q-toolbar>
+      <q-toolbar class="q-gutter-x-sm">
         <q-toolbar-title>
-          DD:A Builder v3.0.0
+          DD:A Builder v{{ version }}
         </q-toolbar-title>
 
-        <div v-if="authStore.user">
-          {{ authStore.user.name }}
+        <q-btn
+          :icon="$q.dark.isActive ? 'fas fa-sun' : 'fas fa-moon'"
+          flat
+          round
+          @click="toggleDarkMode"
+        />
+
+        <template v-if="authStore.user">
+          <span>{{ authStore.user.name }}</span>
 
           <q-btn @click="logout" />
-        </div>
-        <div v-else>
+        </template>
+        <template v-else>
           <a
             :href="loginUrl"
             rel="noopener noreferrer"
@@ -19,7 +26,7 @@
           >
             <img alt="Login" src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png">
           </a>
-        </div>
+        </template>
       </q-toolbar>
     </q-header>
 
@@ -33,11 +40,14 @@
 import { computed } from 'vue';
 import useAuthStore from 'src/stores/auth';
 import axios from 'axios';
-import { Loading, Notify, useInterval } from 'quasar';
+import { Loading, Notify, useInterval, useQuasar } from 'quasar';
 import { noop } from 'src/lib/core';
 
 const authStore = useAuthStore();
 const closeListener = useInterval();
+const q = useQuasar();
+
+const version = import.meta.env.VITE_APP_VERSION;
 
 const loginUrl = computed(() => 'https://steamcommunity.com/openid/login?' + new URLSearchParams({
   'openid.return_to': (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/steam/',
@@ -47,6 +57,10 @@ const loginUrl = computed(() => 'https://steamcommunity.com/openid/login?' + new
   'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
   'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
 }));
+
+function toggleDarkMode() {
+  q.dark.set(!q.dark.isActive);
+}
 
 function startLogin() {
   const newWindow = window.open(loginUrl.value, 'ddaBuildsSteamLogin', 'height=500,width=600');

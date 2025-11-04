@@ -3,11 +3,16 @@
 
 import { defineConfig } from '#q-app/wrappers';
 
+process.env.VITE_APP_VERSION = process.env.NPM_PACKAGE_VERSION || '0.0.0';
+
 export default defineConfig((/* ctx */) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
-    boot: [ 'auth', ],
+    boot: [
+      'prepare',
+      'auth',
+    ],
 
     css: [ 'app.scss', ],
 
