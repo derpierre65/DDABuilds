@@ -1,6 +1,6 @@
 {
   "name": "dda-builds",
-  "version": "0.0.1",
+  "version": "3.0.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -8,17 +8,23 @@
     "build": "quasar build",
     "postinstall": "quasar prepare"
   },
+  "author": "Chakratos",
+  "contributors": [
+    "derpierre65"
+  ],
   "dependencies": {
-    "axios": "^1.2.1",
     "@quasar/extras": "^1.16.4",
+    "axios": "^1.2.1",
     "quasar": "^2.16.0",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
-    "@types/node": "^20.5.9",
+    "@derpierre65/eslint-config": "github:derpierre65/eslint-config",
     "@quasar/app-vite": "^2.1.0",
+    "@types/node": "^20.5.9",
     "autoprefixer": "^10.4.2",
+    "pinia": "^3.0.3",
     "typescript": "~5.5.3"
   },
   "engines": {
