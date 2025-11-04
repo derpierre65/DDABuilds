@@ -2,11 +2,16 @@
     "private": true,
     "name": "dda-builds-2",
     "scripts": {
-        "hot": "mix watch --hot",
-        "build": "mix --production",
-        "eslint": "eslint -c .eslintrc.json --ext .js,.vue resources/src/",
-        "eslint-fix": "eslint -c .eslintrc.json --ext .js,.vue resources/src/ --fix"
+        "legacy:hot": "mix watch --hot",
+        "legacy:build": "mix --production",
+        "legacy:eslint": "eslint -c .eslintrc.json --ext .js,.vue resources/src/",
+        "legacy:eslint-fix": "eslint -c .eslintrc.json --ext .js,.vue resources/src/ --fix",
+        "dev": "cd frontend && npm run dev",
+        "build": "cd frontend && npm run build"
     },
+    "workspaces": [
+      "frontend"
+    ],
     "author": "Chakratos",
     "contributors": [
         "derpierre65"

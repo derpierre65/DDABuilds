@@ -42,7 +42,7 @@ task('npm:install', function() {
 });
 
 task('npm:build', function() {
-	run('cd {{release_path}} && npm run build');
+	run('cd {{release_path}} && npm run legacy:build');
 });
 
 after('deploy:shared', 'npm:install');
