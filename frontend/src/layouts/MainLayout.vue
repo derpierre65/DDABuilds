@@ -1,43 +1,27 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header bordered>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
         <q-toolbar-title>
-          Quasar App
+          DD:A Builder v3.0.0
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div v-if="authStore.user">
+          {{ authStore.user.name }}
+
+          <q-btn @click="logout" />
+        </div>
+        <div v-else>
+          <a
+            :href="loginUrl"
+            rel="noopener noreferrer"
+            @click.prevent="startLogin"
+          >
+            <img alt="Login" src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png">
+          </a>
+        </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -46,57 +30,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { computed } from 'vue';
+import useAuthStore from 'src/stores/auth';
+import axios from 'axios';
+import { Loading, Notify, useInterval } from 'quasar';
+import { noop } from 'src/lib/core';
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+const authStore = useAuthStore();
+const closeListener = useInterval();
+
+const loginUrl = computed(() => 'https://steamcommunity.com/openid/login?' + new URLSearchParams({
+  'openid.return_to': (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/steam/',
+  'openid.realm': import.meta.env.VITE_API_URL || window.location.origin,
+  'openid.mode': 'checkid_setup',
+  'openid.ns': 'http://specs.openid.net/auth/2.0',
+  'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
+  'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
+}));
+
+function startLogin() {
+  const newWindow = window.open(loginUrl.value, 'ddaBuildsSteamLogin', 'height=500,width=600');
+  // for popup blocker user, redirect directly to steam
+  if (!newWindow || typeof newWindow.closed === 'undefined' || newWindow.closed) {
+    window.location.href = loginUrl.value;
+    return;
   }
-];
 
-const leftDrawerOpen = ref(false);
+  closeListener.registerInterval(() => {
+    if (newWindow.closed) {
+      Loading.hide('login');
+      closeListener.removeInterval();
+    }
+  }, 500);
+  Loading.show({
+    group: 'login',
+  });
+  window.addEventListener('message', loginListener);
+}
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+function loginListener(event: MessageEvent) {
+  if (event.origin !== window.location.origin) {
+    return;
+  }
+
+  if (event.data.type === 'LOGIN_FAILED') {
+    Notify.create({
+      color: 'negative',
+      message: 'Something went wrong.', // TODO i18n
+    });
+    Loading.hide('login');
+    return;
+  }
+
+  if (event.data.type !== 'LOGIN_SUCCESS') {
+    return;
+  }
+
+  window.removeEventListener('message', loginListener);
+  Loading.hide('login');
+  authStore.login(event.data.user);
+}
+
+function logout() {
+  Loading.show();
+  axios
+    .delete('/auth/')
+    .then(() => {
+      authStore.logout();
+    })
+    .catch(noop)
+    .finally(() => Loading.hide());
 }
 </script>

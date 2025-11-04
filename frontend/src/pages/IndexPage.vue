@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-// nothing here so far
+import axios from 'axios';
 </script>

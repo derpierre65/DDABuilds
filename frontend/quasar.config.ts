@@ -7,26 +7,27 @@ export default defineConfig((/* ctx */) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
-    boot: [],
+    boot: [ 'auth', ],
 
-    css: [
-      'app.scss'
-    ],
+    css: [ 'app.scss', ],
 
-    extras: [
-      'fontawesome-v6',
-    ],
+    extras: [ 'fontawesome-v6', ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       target: {
-        browser: [ 'es2022', 'firefox115', 'chrome115', 'safari14' ],
-        node: 'node20'
+        browser: [
+          'es2022',
+          'firefox115',
+          'chrome115',
+          'safari14',
+        ],
+        node: 'node20',
       },
 
       typescript: {
         strict: true,
-        vueShim: true
+        vueShim: true,
         // extendTsConfig (tsConfig) {}
       },
 
@@ -44,7 +45,7 @@ export default defineConfig((/* ctx */) => {
       // ignorePublicFolder: true,
       // minify: false,
       // polyfillModulePreload: true,
-      // distDir
+      distDir: '../public/dist',
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
@@ -76,9 +77,9 @@ export default defineConfig((/* ctx */) => {
 
       // Quasar plugins
       plugins: [
-          'Notify',
-          'Dialog',
-          'Loading',
+        'Notify',
+        'Dialog',
+        'Loading',
       ],
     },
 
@@ -102,10 +103,9 @@ export default defineConfig((/* ctx */) => {
     // https://v2.quasar.dev/quasar-cli-vite/developing-ssr/configuring-ssr
     ssr: {
       prodPort: 3000, // The default port that the production server should use
-                      // (gets superseded if process.env.PORT is specified at runtime)
+      // (gets superseded if process.env.PORT is specified at runtime)
 
-      middlewares: [
-        'render' // keep this as last one
+      middlewares: [ 'render', // keep this as last one
       ],
 
       // extendPackageJson (json) {},
@@ -116,7 +116,7 @@ export default defineConfig((/* ctx */) => {
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      pwa: false
+      pwa: false,
       // pwaOfflineHtmlFilename: 'offline.html', // do NOT use index.html as name!
 
       // pwaExtendGenerateSWOptions (cfg) {},
@@ -125,7 +125,7 @@ export default defineConfig((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW' // 'GenerateSW' or 'InjectManifest'
+      workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json',
       // extendManifestJson (json) {},
@@ -143,7 +143,7 @@ export default defineConfig((/* ctx */) => {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
-      hideSplashscreen: true
+      hideSplashscreen: true,
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
@@ -154,7 +154,7 @@ export default defineConfig((/* ctx */) => {
       // extendPackageJson (json) {},
 
       // Electron preload scripts (if any) from /src-electron, WITHOUT file extension
-      preloadScripts: [ 'electron-preload' ],
+      preloadScripts: [ 'electron-preload', ],
 
       // specify the debugging port to use for the Electron app when running in development mode
       inspectPort: 5858,
@@ -177,8 +177,8 @@ export default defineConfig((/* ctx */) => {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'ddabuilds'
-      }
+        appId: 'ddabuilds',
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
@@ -194,7 +194,7 @@ export default defineConfig((/* ctx */) => {
        *
        * @example [ 'my-script.ts', 'sub-folder/my-other-script.js' ]
        */
-      extraScripts: []
-    }
-  }
+      extraScripts: [],
+    },
+  };
 });
