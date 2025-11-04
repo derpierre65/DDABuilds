@@ -6,24 +6,17 @@ use App\Services\Steam;
 use Illuminate\Http\Request;
 
 class SteamAuth {
-	/** @var Request */
-	public $request;
+	public Request $request;
 
-	/** @var int|string */
-	public $steamID;
+	public int|string $steamID;
 
-	/** @var array */
-	public $steamConfig = [];
-
-	/** @var Steam */
-	public $steam;
+	public Steam $steam;
 
 	/**
 	 * @param Request $request
 	 */
 	public function __construct(Request $request) {
 		$this->request = $request;
-		$this->steamConfig = config('services')['steam'];
 		$this->steam = app(Steam::class);
 	}
 
@@ -32,7 +25,8 @@ class SteamAuth {
 	 *
 	 * @return bool
 	 */
-	public function isValidRequest() {
+	public function isValidRequest(): bool
+    {
 		return $this->request->has('openid_sig') && $this->request->has('openid_signed') && $this->request->has('openid_assoc_handle');
 	}
 
@@ -41,16 +35,18 @@ class SteamAuth {
 	 *
 	 * @return null|array
 	 */
-	public function getUserInfo() {
+	public function getUserInfo(): ?array
+    {
 		return $this->steam->getUserInfo($this->steamID);
 	}
 
-	/**
-	 * validate the current request authentication
-	 *
-	 * @return null|int|string
-	 */
-	public function auth() {
+    /**
+     * validate the current request authentication
+     *
+     * @return float|int|string|null
+     */
+	public function auth(): float|int|string|null
+    {
 		if ( !$this->isValidRequest() ) {
 			return null;
 		}

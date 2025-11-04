@@ -52,7 +52,6 @@ class BugReportController extends Controller
 
 		$values['description'] ??= '';
 
-		// TODO
 		return new BugReportResource(BugReport::query()->create(array_merge($values, [
 			'user_id' => auth()->id(),
 			'status' => BugReport::STATUS_OPEN,
